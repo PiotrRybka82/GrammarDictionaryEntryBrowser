@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\dictionary.core\dictionary.core.csproj" />
+    <ProjectReference Include="..\dictionary.data\dictionary.data.csproj" />
+    <ProjectReference Include="..\dictionary.service\dictionary.service.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+
+</Project>
