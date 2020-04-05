@@ -5,8 +5,8 @@ using Dictionary.Core.Models;
 
 namespace Dictionary.Core.Repositories
 {
-    public interface IFormRepository : IRepository<Form>
+    public interface IFormRepository<TEntity> : IBaseRepository<TEntity> where TEntity : Form
     {
-        Task<Form> GetFormByIdAsync(string id);
+
     }
 }

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Dictionary.Core.Repositories
 {
-    public interface IRepository<TEntity> where TEntity : class
+    public interface IBaseRepository<TEntity> where TEntity : class
     {
-        ValueTask<TEntity> GetByIdAsync(string id);
+        Task<TEntity> GetByIdAsync(object id);
+
         Task<IEnumerable<TEntity>> GetAllAsync();
 
         IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
-        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 
         Task<TEntity> SingleOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
     }

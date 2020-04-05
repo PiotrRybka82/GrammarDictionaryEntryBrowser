@@ -5,10 +5,8 @@ using Dictionary.Core.Models;
 
 namespace Dictionary.Core.Repositories
 {
-    public interface ILemmaRepository : IRepository<Lemma>
+    public interface ILemmaRepository<TEntity> : IBaseRepository<TEntity> where TEntity : Lemma
     {
         Task<IEnumerable<Lemma>> GetAllLemmasAsync();
-
-        Task<Lemma> GetLemmaByIdAsync(string id);
     }
 }
