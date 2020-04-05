@@ -27,7 +27,7 @@ namespace dictionary.api
         {
             services
                 .AddControllers()
-                .SetCompatibilityVersion(CompatibilityVersion.Latest);
+                .SetCompatibilityVersion(CompatibilityVersion.Latest); //zapewnia kompatybilność ze wskazaną wersją frameworka
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,6 +36,10 @@ namespace dictionary.api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHsts(); //wymusza na przeglądarce korzystanie wyłącznie z HTTPS
             }
 
             app.UseHttpsRedirection();
