@@ -1,4 +1,4 @@
-namespace Dictionary.Core
+namespace Dictionary.Core.Models
 {
     public abstract class EnumerableItem
     {

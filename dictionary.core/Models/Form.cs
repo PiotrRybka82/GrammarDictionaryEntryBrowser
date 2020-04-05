@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Dictionary.Core
+namespace Dictionary.Core.Models
 {
     public class Form : Base
     {

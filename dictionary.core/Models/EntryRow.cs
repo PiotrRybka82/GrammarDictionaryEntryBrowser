@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Dictionary.Core
+namespace Dictionary.Core.Models
 {
     public class EntryRow : EnumerableItem
     {

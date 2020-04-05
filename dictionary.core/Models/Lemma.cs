@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Dictionary.Core
+namespace Dictionary.Core.Models
 {
     public class Lemma : Base
     {
