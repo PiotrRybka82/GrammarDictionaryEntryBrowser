@@ -26,7 +26,7 @@ namespace Dictionary.Data
         public MongoDbContext(IDatabaseSettings settings)
         {
             _connectionString = settings.ConnectionString;
-            _databaseName = settings.DatabaseName;
+            _databaseName = string.IsNullOrEmpty(settings.DatabaseName) ? "dictionary" : settings.DatabaseName;
 
             _lemmasCollectionName = string.IsNullOrEmpty(settings.LemmasCollectionName) ? "lemmas" : settings.LemmasCollectionName;
             _formsCollectionName = string.IsNullOrEmpty(settings.FormsCollectionName) ? "forms" : settings.FormsCollectionName;
