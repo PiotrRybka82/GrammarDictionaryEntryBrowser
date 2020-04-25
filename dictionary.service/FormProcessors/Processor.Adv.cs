@@ -6,82 +6,90 @@ using Dictionary.Core.Models;
 
 namespace Dictionary.Service.FormProcessors
 {
-    internal class Adv : ProcessorBase
+    internal class Adv : Adj
     {
-        public Adv(IEnumerable<Form> forms, Form searchedForm, string formQueryUrlBase) : base(forms, searchedForm, formQueryUrlBase) { }
+        public Adv(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase) 
+            : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-        protected override void AddParadigmSpecificGeneralLabels(Entry entry)
+
+        protected override void CorrectEntry(Entry entry)
         {
-            //styl
+            base.CorrectEntry(entry);
+
+            //korekta lematu dla przysłówków odimiesłowowych
+            if (SearchedForm.Categories.Contains("pacta"))
+            {
+                entry.Lemma = LexemeForms.Where(x => x.Categories.Contains("pacta")).First().Word;
+            }
 
         }
 
-        protected override void AddRelated(Entry entry)
-        {
-            //przymiotnik podstawowy
-            if (SearchedForm.Categories.Contains("adja"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Pos.Adjective },
-                    Id = entry.Relateds.Count(),
-                    Word = SearchedForm.Lemma.Form,
-                    Url = Path.Combine(FormQueryUrlBase, SearchedForm.Lemma.Form)
-                });
-            }
 
-            //imiesłów podstawowy
-            if (SearchedForm.Categories.Contains("pacta"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.VerbForms.Participle.Active },
-                    Id = entry.Relateds.Count(),
-                    Word = SearchedForm.Lemma.Form,
-                    Url = Path.Combine(FormQueryUrlBase, SearchedForm.Lemma.Form)
-                });
-            }
+        protected override void AddParadigmSpecificGeneralLabels(Entry entry)
+        {
+            //brak
+        }
+
+
+        protected override void AddRelateds(Entry entry)
+        {
+            //formy stopnia 
 
             //stopień równy
-            if (Forms.SelectMany(x => x.Categories).Contains("com") && !SearchedForm.Categories.Contains("pos"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Degree.Positive },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.Compar().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.Posit().First().Word)
-                });
-            }
+            RelatedAddingCondition = () =>
+                AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("com") &&
+                !SearchedForm.Categories.Contains("pos");
+            var categories = new[] { LabelPrototypes.Degree.Positive };
+            WordSelector = () => AdditionalLexemeEqualForms.Where(x => x.Categories.Contains("adv")).Posit().Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
 
             //stopień wyższy
-            if (Forms.SelectMany(x => x.Categories).Contains("com") && !SearchedForm.Categories.Contains("com"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Degree.Comparative },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.Compar().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.Compar().First().Word)
-                });
-            }
+            RelatedAddingCondition = () =>
+                AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("com") &&
+                !SearchedForm.Categories.Contains("com");
+            categories = new[] { LabelPrototypes.Degree.Comparative };
+            WordSelector = () => AdditionalLexemeEqualForms.Where(x => x.Categories.Contains("adv")).Compar().Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
 
             //stopień najwyższy
-            if (Forms.SelectMany(x => x.Categories).Contains("sup") && !SearchedForm.Categories.Contains("sup"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Degree.Superlative },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.Compar().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.Super().First().Word)
-                });
-            }
+            RelatedAddingCondition = () =>
+                AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("sup") &&
+                !SearchedForm.Categories.Contains("sup");
+            categories = new[] { LabelPrototypes.Degree.Superlative };
+            WordSelector = () => AdditionalLexemeEqualForms.Where(x => x.Categories.Contains("adv")).Super().Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
+
+            //przymiotnik podstawowy
+            categories = new[] { LabelPrototypes.Pos.Adjective };
+            WordSelector = () => LexemeForms.Where(x => x.Categories.Contains("adj")).Posit().Sg().Nom().M1().Word();
+
+            AddRelated(entry, "adja", categories, WordSelector);
+
+
+            //imiesłów podstawowy (jeśli przysłówek odimiesłowowy)
+            categories = new[] { LabelPrototypes.VerbForms.Participle.Active };
+            WordSelector = () => LexemeForms.ParticAct().Sg().Nom().M1().Word();
+
+            AddRelated(entry, "pacta", categories, WordSelector);
+
+
+            //czasownik podstawowy (jeśli przysłówek odimiesłowowy)
+            categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
+            WordSelector = () => LexemeForms.Inf().Word();
+
+            AddRelated(entry, "pacta", categories, WordSelector);
+
         }
 
         protected override void AddTables(Entry entry)
         {
-            entry.Tables.Append(
+            entry.Tables = entry.Tables.Add(
                 new Entry.Table
                 {
                     Id = 0,
@@ -105,6 +113,9 @@ namespace Dictionary.Service.FormProcessors
                 //stopień
                 newForm.AddDegreeLabels(forms.ToList()[i]);
 
+                //negacja
+                newForm.AddNegationLabel(forms.ToList()[i]);
+
                 //styl
                 newForm.AddStyleLabels(forms.ToList()[i]);
 
@@ -113,5 +124,7 @@ namespace Dictionary.Service.FormProcessors
             }
 
         }
+
+
     }
 }

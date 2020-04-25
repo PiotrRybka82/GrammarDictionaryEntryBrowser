@@ -26,18 +26,25 @@ namespace Dictionary
         }
 
 
-        public static IEnumerable<T> Remove<T>(this IEnumerable<T> objs, T obj)
-        {
-            IEnumerable<T> newObjs = new List<T>(objs);
-            newObjs.Remove(obj);
-            return newObjs;
-        }
+        //public static IEnumerable<T> Remove<T>(this IEnumerable<T> objs, T obj)
+        //{
+        //    var newObjs = new List<T>();
+
+        //    foreach (var item in objs)
+        //    {
+        //        if (!item.Equals(obj)) newObjs.Add(item);
+
+        //    }
+
+        //    return newObjs;
+        //}
 
         public static IEnumerable<T> Add<T>(this IEnumerable<T> objs, T obj)
         {
-            IEnumerable<T> newObjs = new List<T>(objs);
-            newObjs.Add(obj);
-            return newObjs;
+            var temp = objs.ToList();
+            objs = temp.Append(obj);
+
+            return objs;
         }
 
 

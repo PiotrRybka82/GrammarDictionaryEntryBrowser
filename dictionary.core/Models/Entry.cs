@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Dictionary.Core.Models
 {
@@ -12,8 +13,6 @@ namespace Dictionary.Core.Models
         public IEnumerable<string> Meanings { get; set; } = new List<string>();
         public IEnumerable<Entry.Table> Tables { get; set; } = new List<Entry.Table>();
         public IEnumerable<Entry.Related> Relateds { get; set; } = new List<Entry.Related>();
-
-
 
 
         public class Label : EnumerableItem

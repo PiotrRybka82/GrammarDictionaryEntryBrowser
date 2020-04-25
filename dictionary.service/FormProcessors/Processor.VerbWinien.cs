@@ -7,15 +7,14 @@ namespace Dictionary.Service.FormProcessors
 {
     internal class VerbWinien : Verb
     {
-        public VerbWinien(IEnumerable<Form> forms, Form searchedForm, string formQueryUrlBase) : base(forms, searchedForm, formQueryUrlBase)
+        public VerbWinien(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
+            : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
+
+
+        protected override void AddRelateds(Entry entry)
         {
+            //przymiotnik homonimiczny
 
-        }
-
-
-        protected override void AddRelated(Entry entry)
-        {
-            //brak;
         }
 
         protected override void AddTables(Entry entry)
@@ -23,7 +22,7 @@ namespace Dictionary.Service.FormProcessors
             addAdditionalForms();
 
             //tryb ozn., czas ter.
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = 0,
                 Titles = new[] { LabelPrototypes.Mood.Indicative, LabelPrototypes.Tense.Present },
@@ -31,16 +30,16 @@ namespace Dictionary.Service.FormProcessors
                 Rows = new[]
                 {
                     //1 osoba
-                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(Forms.Pres().Pri().Sg()), GetTableCellForms(Forms.Pres().Pri().Pl()) ),
+                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(LexemeForms.Pres().Pri().Sg()), GetTableCellForms(LexemeForms.Pres().Pri().Pl()) ),
                     //2 osoba
-                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(Forms.Pres().Sec().Sg()), GetTableCellForms(Forms.Pres().Sec().Pl()) ),
+                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(LexemeForms.Pres().Sec().Sg()), GetTableCellForms(LexemeForms.Pres().Sec().Pl()) ),
                     //3 osoba
-                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(Forms.Pres().Ter().Sg()), GetTableCellForms(Forms.Pres().Ter().Pl()) )
+                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(LexemeForms.Pres().Ter().Sg()), GetTableCellForms(LexemeForms.Pres().Ter().Pl()) )
                 }
             });
 
             //tryb ozn., czas przyszły
-            entry.Tables.Append(new Entry.Table
+            entry.Tables =  entry.Tables.Add(new Entry.Table
             {
                 Id = 1,
                 Titles = new[] { LabelPrototypes.Mood.Indicative, LabelPrototypes.Tense.Future },
@@ -48,16 +47,16 @@ namespace Dictionary.Service.FormProcessors
                 Rows = new[]
                 {
                     //1 osoba
-                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(Forms.Fut().Pri().Sg()), GetTableCellForms(Forms.Fut().Pri().Pl()) ),
+                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(LexemeForms.Fut().Pri().Sg()), GetTableCellForms(LexemeForms.Fut().Pri().Pl()) ),
                     //2 osoba
-                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(Forms.Fut().Sec().Sg()), GetTableCellForms(Forms.Fut().Sec().Pl()) ),
+                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(LexemeForms.Fut().Sec().Sg()), GetTableCellForms(LexemeForms.Fut().Sec().Pl()) ),
                     //3 osoba
-                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(Forms.Fut().Ter().Sg()), GetTableCellForms(Forms.Fut().Ter().Pl()) )
+                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(LexemeForms.Fut().Ter().Sg()), GetTableCellForms(LexemeForms.Fut().Ter().Pl()) )
                 }
             });
 
             //tryb ozn., czas przeszły
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = 2,
                 Titles = new[] { LabelPrototypes.Mood.Indicative, LabelPrototypes.Tense.Past },
@@ -65,16 +64,16 @@ namespace Dictionary.Service.FormProcessors
                 Rows = new[]
                 {
                     //1 osoba
-                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(Forms.Past().Pri().Sg()), GetTableCellForms(Forms.Past().Pri().Pl()) ),
+                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(LexemeForms.Past().Pri().Sg()), GetTableCellForms(LexemeForms.Past().Pri().Pl()) ),
                     //2 osoba
-                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(Forms.Past().Sec().Sg()), GetTableCellForms(Forms.Past().Sec().Pl()) ),
+                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(LexemeForms.Past().Sec().Sg()), GetTableCellForms(LexemeForms.Past().Sec().Pl()) ),
                     //3 osoba
-                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(Forms.Past().Ter().Sg()), GetTableCellForms(Forms.Past().Ter().Pl()) )
+                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(LexemeForms.Past().Ter().Sg()), GetTableCellForms(LexemeForms.Past().Ter().Pl()) )
                 }
             });
 
             //tryb przypuszcz. w czasie nie przeszłym
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = 3,
                 Titles = new[] { LabelPrototypes.Mood.Conditional, LabelPrototypes.Tense.NonPast },
@@ -82,16 +81,16 @@ namespace Dictionary.Service.FormProcessors
                 Rows = new[]
                 {
                     //1 osoba
-                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(Forms.CondNonPast().Pri().Sg()), GetTableCellForms(Forms.CondNonPast().Pri().Pl()) ),
+                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(LexemeForms.CondNonPast().Pri().Sg()), GetTableCellForms(LexemeForms.CondNonPast().Pri().Pl()) ),
                     //2 osoba
-                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(Forms.CondNonPast().Sec().Sg()), GetTableCellForms(Forms.CondNonPast().Sec().Pl()) ),
+                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(LexemeForms.CondNonPast().Sec().Sg()), GetTableCellForms(LexemeForms.CondNonPast().Sec().Pl()) ),
                     //3 osoba
-                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(Forms.CondNonPast().Ter().Sg()), GetTableCellForms(Forms.CondNonPast().Ter().Pl()) )
+                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(LexemeForms.CondNonPast().Ter().Sg()), GetTableCellForms(LexemeForms.CondNonPast().Ter().Pl()) )
                 }
             });
 
             //tryb przypuszcz. w czasie nie przeszłym
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = 4,
                 Titles = new[] { LabelPrototypes.Mood.Conditional, LabelPrototypes.Tense.Past },
@@ -99,16 +98,16 @@ namespace Dictionary.Service.FormProcessors
                 Rows = new[]
                 {
                     //1 osoba
-                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(Forms.CondPast().Pri().Sg()), GetTableCellForms(Forms.CondPast().Pri().Pl()) ),
+                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(LexemeForms.CondPast().Pri().Sg()), GetTableCellForms(LexemeForms.CondPast().Pri().Pl()) ),
                     //2 osoba
-                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(Forms.CondPast().Sec().Sg()), GetTableCellForms(Forms.CondPast().Sec().Pl()) ),
+                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(LexemeForms.CondPast().Sec().Sg()), GetTableCellForms(LexemeForms.CondPast().Sec().Pl()) ),
                     //3 osoba
-                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(Forms.CondPast().Ter().Sg()), GetTableCellForms(Forms.CondPast().Ter().Pl()) )
+                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(LexemeForms.CondPast().Ter().Sg()), GetTableCellForms(LexemeForms.CondPast().Ter().Pl()) )
                 }
             });
 
             //tryb rozkaz.
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = 5,
                 Titles = new[] { LabelPrototypes.Mood.Imperative },
@@ -116,23 +115,23 @@ namespace Dictionary.Service.FormProcessors
                 Rows = new[]
                 {
                     //1 osoba
-                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(Forms.Imperat().Pri().Sg()), GetTableCellForms(Forms.Imperat().Pri().Pl()) ),
+                    GenerateEntryTableRow(0, LabelPrototypes.Person.First, GetTableCellForms(LexemeForms.Imperat().Pri().Sg()), GetTableCellForms(LexemeForms.Imperat().Pri().Pl()) ),
                     //2 osoba
-                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(Forms.Imperat().Sec().Sg()), GetTableCellForms(Forms.Imperat().Sec().Pl()) ),
+                    GenerateEntryTableRow(1, LabelPrototypes.Person.Second, GetTableCellForms(LexemeForms.Imperat().Sec().Sg()), GetTableCellForms(LexemeForms.Imperat().Sec().Pl()) ),
                     //3 osoba
-                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(Forms.Imperat().Ter().Sg()), GetTableCellForms(Forms.Imperat().Ter().Pl()) )
+                    GenerateEntryTableRow(2, LabelPrototypes.Person.Third, GetTableCellForms(LexemeForms.Imperat().Ter().Sg()), GetTableCellForms(LexemeForms.Imperat().Ter().Pl()) )
                 }
             });
 
             //bezokolicznik
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = 6,
                 Titles = new[] { LabelPrototypes.VerbForms.Infinitive },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.Inf()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Inf()))
                 }
             });
 
@@ -173,17 +172,17 @@ namespace Dictionary.Service.FormProcessors
         protected override void AddAnalyticalForms(string[] auxiliaryVerb, string oldCat, string newCat, bool auxVerbInPreposition = true)
         {
             //if oldCat = ""...
-            var sgForms = Forms.Sg();
+            var sgForms = LexemeForms.Sg();
 
             foreach (var form in sgForms)
             {
-                SupplementForms(JoinAnalyticalForms(auxiliaryVerb[0], form.Word, auxVerbInPreposition), oldCat == "" ? form.Categories.Add(newCat) : form.Categories.Replace(oldCat, newCat));
+                SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerb[0], form.Word, auxVerbInPreposition), oldCat == "" ? form.Categories.Append(newCat) : form.Categories.Replace(oldCat, newCat));
             }
 
-            var plForms = Forms.Pl();
+            var plForms = LexemeForms.Pl();
             foreach (var form in plForms)
             {
-                SupplementForms(JoinAnalyticalForms(auxiliaryVerb[0], form.Word, auxVerbInPreposition), oldCat == "" ? form.Categories.Add(newCat) : form.Categories.Replace(oldCat, newCat));
+                SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerb[0], form.Word, auxVerbInPreposition), oldCat == "" ? form.Categories.Append(newCat) : form.Categories.Replace(oldCat, newCat));
             }
 
         }
@@ -196,7 +195,7 @@ namespace Dictionary.Service.FormProcessors
             AddAnalyticalForms(new[] { "(jest)", "(są)" }, "", "fin", false);
 
             //formy analityczne czasu przeszłego (gotówem był)
-            AddAnalyticalForms(_auxiliaryVerbs, GetFullParadigm(Forms).ToArray(), "", "praet", false);
+            AddAnalyticalForms(_auxiliaryVerbs, GetFullParadigm(LexemeForms).ToArray(), "", "praet", false);
 
             //formy analityczne czasu przeszłęgo 2 (gotów byłem)
             var _auxiliaryVerbs2 = new[] {
@@ -221,16 +220,16 @@ namespace Dictionary.Service.FormProcessors
             var pseudoParticiplesPl = GetPseudoParticiples().Pl();
             foreach (var form in pseudoParticiplesSg)
             {
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[0], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[1], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[2], form.Word), form.Categories.Add("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[0], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[1], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[2], form.Word), form.Categories.Append("fut"));
             }
 
             foreach (var form in pseudoParticiplesPl)
             {
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[3], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[4], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[5], form.Word), form.Categories.Add("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[3], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[4], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[5], form.Word), form.Categories.Append("fut"));
             }
 
             //formy trybu rozkazującego (niech będę gotów, bądź gotów)
@@ -240,22 +239,22 @@ namespace Dictionary.Service.FormProcessors
             };
             foreach (var form in pseudoParticiplesSg)
             {
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs5[0], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs5[1], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs5[2], form.Word), form.Categories.Add("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs5[0], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs5[1], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs5[2], form.Word), form.Categories.Append("fut"));
             }
 
             foreach (var form in pseudoParticiplesPl)
             {
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[3], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[4], form.Word), form.Categories.Add("fut"));
-                SupplementForms(JoinAnalyticalForms(_auxiliaryVerbs4[5], form.Word), form.Categories.Add("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[3], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[4], form.Word), form.Categories.Append("fut"));
+                SupplementLexemeForms(JoinAnalyticalForms(_auxiliaryVerbs4[5], form.Word), form.Categories.Append("fut"));
             }
 
             //bezokolicznik
             foreach (var item in GetPseudoParticiples())
             {
-                SupplementForms(JoinAnalyticalForms("być", item.Word), item.Categories.Add("inf"));
+                SupplementLexemeForms(JoinAnalyticalForms("być", item.Word), item.Categories.Append("inf"));
             }
 
 
@@ -263,18 +262,62 @@ namespace Dictionary.Service.FormProcessors
 
         protected IEnumerable<Form> GetPseudoParticiples()
         {
-            yield return Forms.Sg().Ter().M1().First();
-            yield return Forms.Sg().Ter().M2().First();
-            yield return Forms.Sg().Ter().M3().First();
-            yield return Forms.Sg().Ter().F().First();
-            yield return Forms.Sg().Ter().N().First();
+            yield return LexemeForms.Sg().M1().First();
+            yield return LexemeForms.Sg().M2().First();
+            yield return LexemeForms.Sg().M3().First();
+            yield return LexemeForms.Sg().F().First();
+            yield return LexemeForms.Sg().N().First();
 
-            yield return Forms.Pl().Ter().M1().First();
-            yield return Forms.Pl().Ter().M2().First();
-            yield return Forms.Pl().Ter().M3().First();
-            yield return Forms.Pl().Ter().F().First();
-            yield return Forms.Pl().Ter().N().First();
+            yield return LexemeForms.Pl().M1().First();
+            yield return LexemeForms.Pl().M2().First();
+            yield return LexemeForms.Pl().M3().First();
+            yield return LexemeForms.Pl().F().First();
+            yield return LexemeForms.Pl().N().First();
         }
+
+
+        protected override IEnumerable<Form> GetFullParadigm(IEnumerable<Form> forms)
+        {
+            yield return forms.Sg().M1().First();
+            yield return forms.Sg().M2().First();
+            yield return forms.Sg().M3().First();
+            yield return forms.Sg().F().First();
+            yield return forms.Sg().N().First();
+
+            yield return forms.Sg().M1().First();
+            yield return forms.Sg().M2().First();
+            yield return forms.Sg().M3().First();
+            yield return forms.Sg().F().First();
+            yield return forms.Sg().N().First();
+
+            yield return forms.Sg().M1().First();
+            yield return forms.Sg().M2().First();
+            yield return forms.Sg().M3().First();
+            yield return forms.Sg().F().First();
+            yield return forms.Sg().N().First();
+
+            yield return forms.Pl().M1().First();
+            yield return forms.Pl().M2().First();
+            yield return forms.Pl().M3().First();
+            yield return forms.Pl().F().First();
+            yield return forms.Pl().N().First();
+
+            yield return forms.Pl().M1().First();
+            yield return forms.Pl().M2().First();
+            yield return forms.Pl().M3().First();
+            yield return forms.Pl().F().First();
+            yield return forms.Pl().N().First();
+
+            yield return forms.Pl().M1().First();
+            yield return forms.Pl().M2().First();
+            yield return forms.Pl().M3().First();
+            yield return forms.Pl().F().First();
+            yield return forms.Pl().N().First();
+        }
+
+
+
+
 
 
 

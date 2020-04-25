@@ -8,91 +8,100 @@ namespace Dictionary.Service.FormProcessors
 {
     internal class Adj : ProcessorBase
     {
-        public Adj(IEnumerable<Form> forms, Form searchedForm, string formQueryUrlBase) : base(forms, searchedForm, formQueryUrlBase) { }
+        public Adj(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
+            : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) 
+        {
+            //filtrowanie form stopnia: 
+            FilterOutDegreeForms();            
+        }
+
+
+        protected override void CorrectEntry(Entry entry)
+        {
+            //korekta lematu dla form stopnia
+            CorrectEntryLemmaOfComparables(entry);
+        }
+
 
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
             //brak
+
         }
 
-        protected override void AddRelated(Entry entry)
+        
+        protected override void AddRelateds(Entry entry)
         {
-            //jeśli imiesłów
-            if (SearchedForm.Categories.Contains("pact") || SearchedForm.Categories.Contains("ppas"))
+            //jeśli imiesłów niezanegowany -> dodaj czasownik podstawowy
+            RelatedAddingCondition = () => SearchedForm.Categories.Contains("pact") || SearchedForm.Categories.Contains("ppas");
+            var categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
+            WordSelector = () => LexemeForms.Inf().Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
+
+            //jeśli forma zanegowana -> dodaj formę niezanegowaną
+            RelatedAddingCondition = () => SearchedForm.Categories.Contains("neg");
+            categories = new[] { LabelPrototypes.Derivatives.NotNeg };
+            if (SearchedForm.Categories.Contains("pact"))
             {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Id = entry.Relateds.Count(),
-                    Word = SearchedForm.Lemma.Form,
-                    Categories = new[] { LabelPrototypes.VerbForms.BaseVerb },
-                    Url = Path.Combine(FormQueryUrlBase, SearchedForm.Lemma.Form)
-                });
+                WordSelector = () => LexemeForms.NotNeg().ParticAct().Sg().Nom().M1().Word();
             }
+            else if (SearchedForm.Categories.Contains("ppas"))
+            {
+                WordSelector = () => LexemeForms.NotNeg().ParticPas().Sg().Nom().M1().Word();
+            }
+            else
+            {
+                WordSelector = () => LexemeForms.NotNeg().Sg().Nom().M1().Word();
+            }
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+            
+
 
             //forma na -u
-            if (SearchedForm.Categories.Contains("adjp"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Other.Polsku },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.Polsku().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.Polsku().First().Word)
-                });
-            }
+            categories = new[] { LabelPrototypes.Other.Polsku };
+            WordSelector = () => LexemeForms.Polsku().Word();
+
+            AddRelated(entry, "adjp", categories, WordSelector);
+
 
             //przysłówek derywowany
-            if (SearchedForm.Categories.Contains("adja"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Pos.Adverb },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.AdjBAdv().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.AdjBAdv().First().Word)
-                });
-            }
+            categories = new[] { LabelPrototypes.Pos.Adverb };
+            WordSelector = () => LexemeForms.AdjBAdv().Word();
+
+            AddRelated(entry, "adja", categories, WordSelector);
+
 
             //stopień równy
-            if (Forms.SelectMany(x => x.Categories).Contains("com") && !SearchedForm.Categories.Contains("pos"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Degree.Positive },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.Compar().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.Posit().First().Word)
-                });
-            }
+            RelatedAddingCondition = () =>
+                AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("com") &&
+                !SearchedForm.Categories.Contains("pos");
+            categories = new[] { LabelPrototypes.Degree.Positive };
+            WordSelector = () => AdditionalLexemeEqualForms.Posit().Sg().Nom().M1().Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
 
             //stopień wyższy
-            if (Forms.SelectMany(x => x.Categories).Contains("com") && !SearchedForm.Categories.Contains("com"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Degree.Comparative },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.Compar().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.Compar().First().Word)
-                });
-            }
+            RelatedAddingCondition = () =>
+                AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("com") &&
+                !SearchedForm.Categories.Contains("com");
+            categories = new[] { LabelPrototypes.Degree.Comparative };
+            WordSelector = () => AdditionalLexemeEqualForms.Compar().Sg().Nom().M1().Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
 
             //stopień najwyższy
-            if (Forms.SelectMany(x => x.Categories).Contains("sup") && !SearchedForm.Categories.Contains("sup"))
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Degree.Superlative },
-                    Id = entry.Relateds.Count(),
-                    Word = Forms.Compar().First().Word,
-                    Url = Path.Combine(FormQueryUrlBase, Forms.Super().First().Word)
-                });
-            }
+            RelatedAddingCondition = () =>
+                AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("sup") &&
+                !SearchedForm.Categories.Contains("sup");
+            categories = new[] { LabelPrototypes.Degree.Superlative };
+            WordSelector = () => AdditionalLexemeEqualForms.Super().Sg().Nom().M1().Word();
 
-
-
-
-
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
 
 
@@ -100,7 +109,7 @@ namespace Dictionary.Service.FormProcessors
 
         protected override void AddTables(Entry entry)
         {
-            entry.Tables.Append(
+            entry.Tables = entry.Tables.Add(
                 new Entry.Table
                 {
                     Id = 0,
@@ -109,19 +118,19 @@ namespace Dictionary.Service.FormProcessors
                     Rows = new[]
                     {
                         //mianownik
-                        GenerateEntryTableRow(0, LabelPrototypes.Case.Nominative, GetTableCellForms(Forms.Sg().Nom()), GetTableCellForms(Forms.Pl().Nom())),
+                        GenerateEntryTableRow(0, LabelPrototypes.Case.Nominative, GetTableCellForms(LexemeForms.Sg().Nom()), GetTableCellForms(LexemeForms.Pl().Nom())),
                         //dopełniacz
-                        GenerateEntryTableRow(1, LabelPrototypes.Case.Genitive, GetTableCellForms(Forms.Sg().Gen()), GetTableCellForms(Forms.Pl().Gen())),
+                        GenerateEntryTableRow(1, LabelPrototypes.Case.Genitive, GetTableCellForms(LexemeForms.Sg().Gen()), GetTableCellForms(LexemeForms.Pl().Gen())),
                         //celownik
-                        GenerateEntryTableRow(2, LabelPrototypes.Case.Dative, GetTableCellForms(Forms.Sg().Dat()), GetTableCellForms(Forms.Pl().Dat())),
+                        GenerateEntryTableRow(2, LabelPrototypes.Case.Dative, GetTableCellForms(LexemeForms.Sg().Dat()), GetTableCellForms(LexemeForms.Pl().Dat())),
                         //biernik
-                        GenerateEntryTableRow(3, LabelPrototypes.Case.Accusative, GetTableCellForms(Forms.Sg().Acc()), GetTableCellForms(Forms.Pl().Acc())),
+                        GenerateEntryTableRow(3, LabelPrototypes.Case.Accusative, GetTableCellForms(LexemeForms.Sg().Acc()), GetTableCellForms(LexemeForms.Pl().Acc())),
                         //narzędnik
-                        GenerateEntryTableRow(4, LabelPrototypes.Case.Instrumental, GetTableCellForms(Forms.Sg().Ins()), GetTableCellForms(Forms.Pl().Ins())),
+                        GenerateEntryTableRow(4, LabelPrototypes.Case.Instrumental, GetTableCellForms(LexemeForms.Sg().Ins()), GetTableCellForms(LexemeForms.Pl().Ins())),
                         //miejscownik
-                        GenerateEntryTableRow(5, LabelPrototypes.Case.Locative, GetTableCellForms(Forms.Sg().Loc()), GetTableCellForms(Forms.Pl().Loc())),
+                        GenerateEntryTableRow(5, LabelPrototypes.Case.Locative, GetTableCellForms(LexemeForms.Sg().Loc()), GetTableCellForms(LexemeForms.Pl().Loc())),
                         //wołacz
-                        GenerateEntryTableRow(6, LabelPrototypes.Case.Vocative, GetTableCellForms(Forms.Sg().Voc()), GetTableCellForms(Forms.Pl().Voc()))
+                        GenerateEntryTableRow(6, LabelPrototypes.Case.Vocative, GetTableCellForms(LexemeForms.Sg().Voc()), GetTableCellForms(LexemeForms.Pl().Voc()))
                     }
                 }
             );
@@ -145,6 +154,9 @@ namespace Dictionary.Service.FormProcessors
 
                 //stopień
                 newForm.AddDegreeLabels(forms.ToList()[i]);
+
+                //negacja
+                newForm.AddNegationLabel(forms.ToList()[i]);
 
                 //styl
                 newForm.AddStyleLabels(forms.ToList()[i]);

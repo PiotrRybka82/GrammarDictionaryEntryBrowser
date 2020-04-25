@@ -1,95 +1,102 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Dictionary.Core.Models;
 
+[assembly: InternalsVisibleTo("dictionary.tests")]
 namespace Dictionary.Service.FormProcessors
 {
     internal abstract class ProcessorBase
     {
+        #region private fields
+
         private readonly Form _searchedForm;
-        private IEnumerable<Form> _forms;
+        private IEnumerable<Form> _lexemeForms;
+        private IEnumerable<Form> _homonymousForms;
+        private IEnumerable<Form> _additionalLexemeEqualForms;
 
         private readonly string _formQueryUrlBase;
+
+        #endregion
+
+
+
+        #region protected properties
+
+        protected Func<string> WordSelector;
+        protected Func<bool> RelatedAddingCondition;
 
 
         protected string FormQueryUrlBase => _formQueryUrlBase;
 
         protected Form SearchedForm => _searchedForm;
-        protected IEnumerable<Form> Forms => _forms;
-
-        protected string SearchedFormFirstCategory => SearchedForm.Categories.FirstOrDefault();
-        protected IEnumerable<string> FormsFirstCategory => Forms.Select(x => x.Categories.FirstOrDefault()).Distinct();
-
-
-
-
-        internal ProcessorBase(IEnumerable<Form> forms, Form searchedForm, string formQueryUrlBase)
+        protected IEnumerable<Form> LexemeForms
         {
-            _searchedForm = searchedForm;
-            _forms = forms;
-            _formQueryUrlBase = formQueryUrlBase;
+            get { return _lexemeForms; }
+            set { _lexemeForms = value; }
+        }
+        protected IEnumerable<Form> HomonymousForms => _homonymousForms;
+        protected IEnumerable<Form> AdditionalLexemeEqualForms
+        {
+            get { return _additionalLexemeEqualForms; }
+            set { _additionalLexemeEqualForms = value; }
         }
 
 
+
+        protected string SearchedFormFirstCategory => SearchedForm.Categories.FirstOrDefault();
+        protected IEnumerable<string> FormsFirstCategory => LexemeForms.Select(x => x.Categories.FirstOrDefault()).Distinct();
+
+        #endregion
+
+
+
+        #region constructor
+
+        internal ProcessorBase(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
+        {
+            _searchedForm = searchedForm;
+            _lexemeForms = lexemeForms;
+            _homonymousForms = homonymousForms;
+            _formQueryUrlBase = formQueryUrlBase;
+            _additionalLexemeEqualForms = lexemeForms;
+        }
+
+        #endregion
+
+
+
+        #region abstract methods
 
         protected abstract void AddParadigmSpecificGeneralLabels(Entry entry);
         protected abstract void AddTables(Entry entry);
-        protected abstract void AddRelated(Entry entry);
+        protected abstract void AddRelateds(Entry entry);
         protected abstract IEnumerable<Entry.Form> GetTableCellForms(IEnumerable<Form> forms);
+        protected abstract void CorrectEntry(Entry entry);
+
+        #endregion
 
 
 
-        protected void SupplementForms(string newWord, IEnumerable<string> categories)
+        #region internal methods
+
+        internal Entry GetEntry(int index)
         {
-            Forms.Append(new Form
-            {
-                Categories = categories,
-                Labels = SearchedForm.Labels,
-                Lemma = SearchedForm.Lemma,
-                Meanings = SearchedForm.Meanings,
-                Word = newWord
-            });
-        }
+            var entry = InitializeEntry(index);
+            AddGeneralLabels(entry);
+            AddParadigmSpecificGeneralLabels(entry);
+            AddTables(entry);
+            AddRelateds(entry);
+            CorrectEntry(entry);
 
-        protected Entry.Row GenerateEntryTableRow(int id, Entry.Label rowCategory, params IEnumerable<Entry.Form>[] forms)
-        {
-            var newRow = new Entry.Row
-            {
-                Id = id,
-                RowCategory = rowCategory
-            };
+            return entry;
 
-            for (int i = 0; i < forms.Count(); i++)
-            {
-                newRow.Columns.Append(new Entry.Column
-                {
-                    Id = i,
-                    Forms = forms.ToList()[i]
-                });
-            }
-
-            return newRow;
-        }
-
-        internal IEnumerable<Entry> GetEntries()
-        {
-            var formGroups = GroupFormsByLemmas(Forms).ToList();
-
-            for (int i = 0; i < formGroups.Count(); i++)
-            {
-                var entry = initializeEntry(i);
-                addGeneralLabels(entry);
-                AddParadigmSpecificGeneralLabels(entry);
-                AddTables(entry);
-                AddRelated(entry);
-
-                yield return entry;
-            }
         }
 
 
-        protected Paradigm? GetParadigm()
+        internal Paradigm? GetParadigm()
         {
             if (isIndeclinable()) return Paradigm.indeclinable;
             else if (isNoun()) return Paradigm.noun;
@@ -110,31 +117,64 @@ namespace Dictionary.Service.FormProcessors
             else return null;
         }
 
+        #endregion
 
-        private Entry initializeEntry(int index, string lemma = "")
+
+
+
+        #region protected auxiliary methods
+
+        protected void SupplementLexemeForms(string newWord, IEnumerable<string> categories)
+        {
+            LexemeForms = LexemeForms.Add(new Form
+            {
+                Categories = categories,
+                Labels = SearchedForm.Labels,
+                Lemma = SearchedForm.Lemma,
+                Meanings = SearchedForm.Meanings,
+                Word = newWord
+            });
+        }
+
+
+        protected Entry.Row GenerateEntryTableRow(int id, Entry.Label rowCategory, params IEnumerable<Entry.Form>[] forms)
+        {
+            var newRow = new Entry.Row
+            {
+                Id = id,
+                RowCategory = rowCategory
+            };
+
+            for (int i = 0; i < forms.Count(); i++)
+            {
+                newRow.Columns = newRow.Columns.Add(new Entry.Column
+                {
+                    Id = i,
+                    Forms = forms.ToList()[i]
+                });
+            }
+
+            return newRow;
+        }
+
+
+        protected Entry InitializeEntry(int index, string lemma = "")
         {
             return new Entry
             {
                 Lemma = lemma == "" ? SearchedForm.Lemma.Form : lemma,
-                Meanings = Forms.SelectMany(x => x.Meanings).Distinct(),
-                Pos = getPos(),
+                Meanings = LexemeForms.SelectMany(x => x.Meanings).Distinct(),
+                Pos = GetPos(),
                 Labels = null,
                 Id = index,
-                Paradigm = GetParadigm()?.ToString()
+                Paradigm = GetParadigm()?.ToString(),
+                Relateds = new List<Entry.Related>(),
+                Tables = new List<Entry.Table>()
             };
         }
+                
 
-        private IEnumerable<IEnumerable<Form>> GroupFormsByLemmas(IEnumerable<Form> forms)
-        {
-            var lemmaTags = forms.Select(x => x.Lemma.Tag).Distinct();
-
-            foreach (var lemmaTag in lemmaTags)
-            {
-                yield return forms.Where(x => x.Lemma.Tag.Equals(lemmaTag));
-            }
-        }
-
-        private Entry.Label getPos()
+        protected Entry.Label GetPos()
         {
             string abbr = SearchedFormFirstCategory;
             int id = 0;
@@ -147,15 +187,17 @@ namespace Dictionary.Service.FormProcessors
                 case "interj": value = "wykrzyknik"; break;
 
                 case "subst":
-                case "depr": value = "rzeczownik"; break;
+                case "depr": abbr = "subst"; value = "rzeczownik"; break;
+                
+                case "ger": value = "odsłownik"; descr = "rzeczownik odczasownikowy"; break;  
 
                 case "adj":
-                case "adjc": value = "przymiotnik"; break;
+                case "adjc": abbr = "adj"; value = "przymiotnik"; break;
 
                 case "adjp":
                 case "adja":
                 case "adv":
-                case "pacta": value = "przysłówek"; break;
+                case "pacta": abbr = "adv"; value = "przysłówek"; break;
 
                 case "inf":
                 case "praet":
@@ -166,32 +208,30 @@ namespace Dictionary.Service.FormProcessors
                 case "bedzie":
                 case "aglt":
                 case "winien":
-                case "pred": value = "czasownik"; break;
+                case "pred": abbr = "verb"; value = "czasownik"; break;
 
-                case "ger": value = "odsłownik"; descr = "rzeczownik odczasownikowy"; break;
+                case "pact": value = "imiesłów przymiotnikowy czynny"; break;
+                case "ppas": value = "imiesłów przymiotnikowy bierny"; break;
 
-                case "pact":
-                case "ppas": value = "imiesłów przymiotnikowy"; break;
-
-                case "pant":
-                case "pcon": value = "imiesłów przysłówkowy"; break;
+                case "pant": value = "imiesłów przysłówkowy uprzedni"; break;
+                case "pcon": value = "imiesłów przysłówkowy współczesny"; break;
 
                 case "conj":
-                case "comp": value = "spójnik"; break;
+                case "comp": abbr = "conj"; value = "spójnik"; break;
 
                 case "part": value = "partykuła"; break;
 
                 case "brev": value = "skrót"; break;
 
-                case "frag": value = "burkinostka"; descr = "cząstka nazwy wielowyrazowej, niewystępująca samodzielnie"; break;
+                case "frag": value = "burkinostka"; descr = "cząstka nazwy wielowyrazowej niewystępująca samodzielnie"; break;
 
                 case "prep": value = "przyimek"; break;
 
                 case "numcomp":
-                case "num": value = "liczebnik"; break;
+                case "num": abbr = "num"; value = "liczebnik"; break;
 
                 case "ppron12":
-                case "ppron3": value = "zaimek osobowy"; break;
+                case "ppron3": abbr = "pron"; value = "zaimek osobowy"; break;
 
                 default: value = ""; break;
             }
@@ -206,19 +246,102 @@ namespace Dictionary.Service.FormProcessors
             };
         }
 
-        private void addGeneralLabels(Entry entry)
+
+        protected void AddGeneralLabels(Entry entry)
         {
             //dodanie etykiet pojawiających się we wszystkich formach
 
             //znaczenia
-            entry.Meanings = Forms.SelectMany(x => x.Meanings).Distinct();
+            entry.Meanings = LexemeForms.SelectMany(x => x.Meanings).Distinct();
 
             //globalne kwalifikatory stylistyczne
-            var globalLabels = findAndRemoveGlobalLabels(Forms);
-            globalLabels.ToList().ForEach(x => entry.Labels.Append(x));
+            var globalLabels = FindGlobalLabels(LexemeForms).ToList();
+            globalLabels.ForEach(x => RemoveGlobalLabel(LexemeForms, x));
+
+            if (entry.Labels == null) entry.Labels = new List<Entry.Label>();
+
+            foreach (string globalLabel in globalLabels)
+            {
+                var tempForm = new Form { Labels = new[] { globalLabel } };
+                
+                var tempEntryForm = new Entry.Form();
+
+                tempEntryForm.AddStyleLabels(tempForm);
+
+                if (tempEntryForm.Categories != null)
+                {
+                    if (tempEntryForm.Categories.Count() > 0) entry.Labels = entry.Labels.Add(tempEntryForm.Categories.First());
+                }
+                
+            }
+
+
         }
 
-        private IEnumerable<Entry.Label> findAndRemoveGlobalLabels(IEnumerable<Form> forms)
+
+
+        protected void AddRelated(
+            Entry entry,
+            Func<bool> conditionOfAddingRelated,
+            IEnumerable<Entry.Label> categoriesOfRelated,
+            Func<string> relatedWordSelector)
+        {
+            string word = relatedWordSelector();
+
+            if (conditionOfAddingRelated() && !word.Equals(""))
+            {
+                entry.Relateds = entry.Relateds.Add(new Entry.Related
+                {
+                    Id = entry.Relateds.Count(),
+                    Word = word,
+                    Url = Path.Combine(FormQueryUrlBase, word),
+                    Categories = categoriesOfRelated
+                });
+            }
+        }
+
+        protected void AddRelated(
+            Entry entry,
+            string conditionalCategoryToBeFoundInForms,
+            IEnumerable<Entry.Label> categoriesOfRelated,
+            Func<string> relatedWordSelector)
+        {
+            Func<bool> condition = () => LexemeForms.SelectMany(x => x.Categories).Contains(conditionalCategoryToBeFoundInForms);
+
+            AddRelated(entry, condition, categoriesOfRelated, relatedWordSelector);
+        }
+
+
+
+        protected void FilterOutDegreeForms()
+        {
+            if (SearchedForm.Categories.Contains("pos")) //na we stopień równy -> usuń stopień wyższy i najwyższy
+            {
+                LexemeForms = LexemeForms.Where(x => !x.Categories.Contains("com") && !x.Categories.Contains("sup"));
+            }
+            else if (SearchedForm.Categories.Contains("com")) //na we stopień wyższy -> usuń stopień równy i najwyższy
+            {
+                LexemeForms = LexemeForms.Where(x => !x.Categories.Contains("pos") && !x.Categories.Contains("sup"));
+            }
+            else if (SearchedForm.Categories.Contains("sup")) //na we stopień najwyższy -> usuń stopień równy i wyższy
+            {
+                LexemeForms = LexemeForms.Where(x => !x.Categories.Contains("pos") && !x.Categories.Contains("com"));
+            }
+        }
+
+
+
+        protected void CorrectEntryLemmaOfComparables(Entry entry)
+        {
+            if (SearchedForm.Categories.Contains("com") || SearchedForm.Categories.Contains("sup"))
+            {
+                entry.Lemma = SearchedForm.Word;
+            }
+        }
+
+
+
+        protected IEnumerable<string> FindGlobalLabels(IEnumerable<Form> forms)
         {
             int numberOfForms = forms.Count();
 
@@ -227,35 +350,35 @@ namespace Dictionary.Service.FormProcessors
 
             foreach (string label in distinctLabels)
             {
+                if (label == null) continue;
+                if (label == "") continue;
+
                 int numberOfLabels = allLabels.Count(x => x.Equals(label));
 
                 if (numberOfLabels == numberOfForms)
                 {
-                    removeGlobalLabel(forms, label);
-
-                    var newForm = new Form { Categories = new[] { label } };
-                    var newEntryForm = new Entry.Form();
-                    newEntryForm.AddStyleLabels(newForm);
-
-                    yield return newEntryForm.Categories.First();
+                    yield return label;
                 }
             }
 
         }
 
-        private void removeGlobalLabel(IEnumerable<Form> forms, string label)
+
+        protected void RemoveGlobalLabel(IEnumerable<Form> forms, string label)
         {
-            for (int i = 0; i < forms.Count(); i++)
+            foreach (var form in forms)
             {
-                if (forms.ToList()[i].Categories.Contains(label))
+                if (form.Labels != null)
                 {
-                    List<string> newCategories = forms.ToList()[i].Categories.ToList();
-                    newCategories.Remove(label);
-                    forms.ToList()[i].Categories = newCategories;
-                }
+                    var tempList = form.Labels.ToList();
 
+                    tempList.Remove(label);
+
+                    form.Labels = tempList;
+                }
             }
         }
+
 
         private bool searchedFormFirstCategoryContainsTags(string tags, string separator)
         {
@@ -272,10 +395,16 @@ namespace Dictionary.Service.FormProcessors
             return false;
         }
 
+        #endregion
+
+
+
+
+        #region isPos auxiliary methods
 
         private bool isIndeclinable()
         {
-            return searchedFormFirstCategoryContainsTags("interj|conj|comp|part|brev|frag|prep|pant|pcon|pacta", "|");
+            return searchedFormFirstCategoryContainsTags("interj|conj|comp|part|brev|frag|prep|pant|pcon", "|");
         }
 
         private bool isNoun()
@@ -290,12 +419,12 @@ namespace Dictionary.Service.FormProcessors
 
         private bool isAdv()
         {
-            return searchedFormFirstCategoryContainsTags("adv|adjp|adja", "|");
+            return searchedFormFirstCategoryContainsTags("adv|adjp|adja|pacta", "|");
         }
 
         private bool isV()
         {
-            return searchedFormFirstCategoryContainsTags("inf|preat|fin|cond|impt|imps", "|");
+            return searchedFormFirstCategoryContainsTags("inf|praet|fin|cond|impt|imps", "|");
         }
 
         private bool isV_ToBe()
@@ -328,7 +457,7 @@ namespace Dictionary.Service.FormProcessors
             return searchedFormFirstCategoryContainsTags("ppron3", "|");
         }
 
-
+        #endregion
 
     }
 

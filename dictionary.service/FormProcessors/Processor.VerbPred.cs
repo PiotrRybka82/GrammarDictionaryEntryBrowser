@@ -9,10 +9,8 @@ namespace Dictionary.Service.FormProcessors
     internal class VerbPred : Verb
     {
 
-        public VerbPred(IEnumerable<Form> forms, Form searchedForm, string formQueryUrlBase) : base(forms, searchedForm, formQueryUrlBase)
-        {
-
-        }
+        public VerbPred(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
+            : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
 
 
@@ -21,25 +19,31 @@ namespace Dictionary.Service.FormProcessors
             //brak
         }
 
-        protected override void AddRelated(Entry entry)
+        protected override void AddRelateds(Entry entry)
         {
-            //rzeczownik
-            AddRelatedNouns(entry);
+            //leksem homonimiczny
+            RelatedAddingCondition = () => HomonymousForms.SelectMany(x => x.Categories).Contains("inf"); //czasownik
+            var categories = new[] { LabelPrototypes.Pos.Verb };
+            WordSelector = () => HomonymousForms.Inf().Word();
 
-            //czasownik właściwy
-            var verbs = Forms.Where(x => x.Categories.Contains("inf"));
-            if (verbs != null)
-            {
-                entry.Relateds.Add(
-                    new Entry.Related
-                    {
-                        Id = entry.Relateds.Count(),
-                        Categories = new[] { LabelPrototypes.VerbForms.BaseVerb },
-                        Word = verbs.First().Word,
-                        Url = Path.Combine(FormQueryUrlBase, verbs.First().Word)
-                    }
-                );
-            }
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
+
+
+            RelatedAddingCondition = () => HomonymousForms.SelectMany(x => x.Categories).Contains("subst"); //rzeczownik
+            categories = new[] { LabelPrototypes.Pos.Noun };
+            WordSelector = () => HomonymousForms.Where(x => x.Categories.Contains("subst")).Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
+
+            RelatedAddingCondition = () => HomonymousForms.SelectMany(x => x.Categories).Contains("ger"); //odsłownik
+            categories = new[] { LabelPrototypes.VerbForms.Gerund };
+            WordSelector = () => HomonymousForms.Where(x => x.Categories.Contains("ger")).Word();
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
+
 
         }
 
@@ -48,86 +52,86 @@ namespace Dictionary.Service.FormProcessors
             addAdditionalForms();
 
             //tryb ozn., czas ter.
-            entry.Tables.Add(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = entry.Tables.Count(),
                 Titles = new[] { LabelPrototypes.Mood.Indicative, LabelPrototypes.Tense.Present },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.Ind().Pres()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Ind().Pres()))
                 }
             });
 
             //tryb ozn., czas przesz.
-            entry.Tables.Add(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = entry.Tables.Count(),
                 Titles = new[] { LabelPrototypes.Mood.Indicative, LabelPrototypes.Tense.Past },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.Ind().Past()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Ind().Past()))
                 }
             });
 
             //tryb ozn., czas przysz.
-            entry.Tables.Add(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = entry.Tables.Count(),
                 Titles = new[] { LabelPrototypes.Mood.Indicative, LabelPrototypes.Tense.Future },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.Ind().Fut()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Ind().Fut()))
                 }
             });
 
             //tryb przyp., czas nieprzesz.
-            entry.Tables.Add(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = entry.Tables.Count(),
                 Titles = new[] { LabelPrototypes.Mood.Conditional, LabelPrototypes.Tense.NonPast },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.CondNonPast()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.CondNonPast()))
                 }
             });
 
             //tryb przyp., czas przesz.
-            entry.Tables.Add(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = entry.Tables.Count(),
                 Titles = new[] { LabelPrototypes.Mood.Conditional, LabelPrototypes.Tense.Past },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.CondPast()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.CondPast()))
                 }
             });
 
             //tryb rozkaz.
-            entry.Tables.Add(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = entry.Tables.Count(),
                 Titles = new[] { LabelPrototypes.Mood.Imperative },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.Imperat()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Imperat()))
                 }
             });
 
             //bezokolicznik
-            entry.Tables.Add(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Id = entry.Tables.Count(),
                 Titles = new[] { LabelPrototypes.VerbForms.Infinitive },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(Forms.Inf()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Inf()))
                 }
             });
 
@@ -144,34 +148,34 @@ namespace Dictionary.Service.FormProcessors
         private void addAdditionalForms()
         {
             var aspect = GetAspect();
-            string baseWord = Forms.Where(x => x.Categories.Contains("winien")).First().Word;
+            string baseWord = LexemeForms.Where(x => x.Categories.Contains("pred")).Word();
 
             //tryb ozn., czas ter. (brak [jest])
-            SupplementForms(JoinAnalyticalForms(baseWord, "(jest)"), aspect.Add("fin"));
-            SupplementForms(JoinAnalyticalForms(baseWord, "(jest)", false), aspect.Add("fin"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "(jest)"), aspect.Append("fin"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "(jest)", false), aspect.Append("fin"));
 
             //tryb ozn., czas przesz. (brak było)
-            SupplementForms(JoinAnalyticalForms(baseWord, "było"), aspect.Add("praet"));
-            SupplementForms(JoinAnalyticalForms(baseWord, "było", false), aspect.Add("praet"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "było"), aspect.Append("praet"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "było", false), aspect.Append("praet"));
 
             //tryb ozn., czas przysz. (brak będzie)
-            SupplementForms(JoinAnalyticalForms(baseWord, "będzie"), aspect.Add("fut"));
-            SupplementForms(JoinAnalyticalForms(baseWord, "będzie", false), aspect.Add("fut"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "będzie"), aspect.Append("fut"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "będzie", false), aspect.Append("fut"));
 
             //tryb przyp., czas nieprzesz. (brak by)
-            SupplementForms(JoinAnalyticalForms(baseWord, "by"), aspect.Add("cond"));
-            SupplementForms(JoinAnalyticalForms(baseWord, "by", false), aspect.Add("cond"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "by"), aspect.Append("cond"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "by", false), aspect.Append("cond"));
 
             //tryb przyp., czas przesz. (byłoby brak)
-            SupplementForms(JoinAnalyticalForms(baseWord, "byłoby"), aspect.Add("cond").Add("praet"));
-            SupplementForms(JoinAnalyticalForms(baseWord, "byłoby", false), aspect.Add("cond").Add("praet"));
-            SupplementForms(JoinAnalyticalForms(baseWord, "by było", false), aspect.Add("cond").Add("praet"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "byłoby"), aspect.Append("cond").Append("praet"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "byłoby", false), aspect.Append("cond").Append("praet"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "by było", false), aspect.Append("cond").Append("praet"));
 
             //tryb rozkaz. (niech będzie brak)
-            SupplementForms(JoinAnalyticalForms(baseWord, "niech będzie", false), aspect.Add("impt"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "niech będzie", false), aspect.Append("impt"));
 
             //bezokolicznik (być brak)
-            SupplementForms(JoinAnalyticalForms(baseWord, "być", false), aspect.Add("inf"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "być", false), aspect.Append("inf"));
 
 
         }

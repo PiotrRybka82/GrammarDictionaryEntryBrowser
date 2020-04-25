@@ -87,7 +87,7 @@ namespace Dictionary.Service.FormProcessors
         internal static class Degree //stopień
         {
             public static Entry.Label Positive => new Entry.Label { ValueAbbr = "pos", Id = 0, Name = "stopień", ValueFull = "równy" };
-            public static Entry.Label Comparative => new Entry.Label { ValueAbbr = "comp", Id = 0, Name = "stopień", ValueFull = "wyższy" };
+            public static Entry.Label Comparative => new Entry.Label { ValueAbbr = "com", Id = 0, Name = "stopień", ValueFull = "wyższy" };
             public static Entry.Label Superlative => new Entry.Label { ValueAbbr = "sup", Id = 0, Name = "stopień", ValueFull = "najwyższy" };
         }
 
@@ -135,7 +135,7 @@ namespace Dictionary.Service.FormProcessors
 
         internal static class VerbForms //formy czasownika i odczasownikowe
         {
-            public static Entry.Label BaseVerb => new Entry.Label { ValueFull = "czasownik bazowy", Id = 0 };
+            public static Entry.Label BaseVerb => new Entry.Label { ValueFull = "czasownik podstawowy", Id = 0 };
             public static Entry.Label Impersonal => new Entry.Label { ValueAbbr = "imps", Id = 0, Name = "", ValueFull = "bezosobnik", Description = "forma zakończona na »-no« lub »-to«" };
             public static Entry.Label Infinitive => new Entry.Label { ValueAbbr = "inf", Id = 0, Name = "", ValueFull = "bezokolicznik" };
             public static Entry.Label Gerund => new Entry.Label { ValueAbbr = "ger", Id = 0, Name = "część mowy", ValueFull = "odsłownik", Description = "rzeczownik odczasownikowy" };
@@ -165,6 +165,10 @@ namespace Dictionary.Service.FormProcessors
             public static Entry.Label AdjectiveBasedAdverb => new Entry.Label { ValueAbbr = "adja", Id = 0, Name = "", ValueFull = "przysłówek odprzymiotnikowy" };
             public static Entry.Label ParticipleBasedAdverb => new Entry.Label { ValueAbbr = "pacta", Id = 0, Name = "", ValueFull = "przysłówek odimiesłowowy, np. »drwiąco«" };
 
+            public static Entry.Label Aff => new Entry.Label { ValueAbbr = "aff", Id = 0, Name = "", ValueFull = "forma z opcjonalnym sufiksem »się«", Description = "formie może towarzyszyć sufiks »się«" };
+            public static Entry.Label Neg => new Entry.Label { ValueAbbr = "neg", Id = 0, Name = "negacja", ValueFull = "forma zanegowana" };
+            public static Entry.Label NotNeg => new Entry.Label { ValueAbbr = "neg", Id = 0, Name = "negacja", ValueFull = "forma niezanegowana" };
+
         }
 
         internal static class Vocality //wokaliczność
@@ -181,8 +185,7 @@ namespace Dictionary.Service.FormProcessors
 
         internal static class Other
         {
-            public static Entry.Label Aff => new Entry.Label { ValueAbbr = "aff", Id = 0, Name = "", ValueFull = "forma z opcjonalnym sufiksem »się«", Description = "formie może towarzyszyć sufiks »się«" };
-            public static Entry.Label Neg => new Entry.Label { ValueAbbr = "neg", Id = 0, Name = "", ValueFull = "forma zanegowana" };
+            
             public static Entry.Label Numcomp => new Entry.Label { ValueAbbr = "numcomp", Id = 0, Name = "", ValueFull = "cząstka liczebników złożonych" };
 
             public static Entry.Label Abbreviation => new Entry.Label { ValueAbbr = "brev", Id = 0, Name = "część mowy", ValueFull = "skrót lub skrótowiec" };
@@ -191,7 +194,7 @@ namespace Dictionary.Service.FormProcessors
 
 
 
-            public static Entry.Label Deprecating => new Entry.Label { ValueAbbr = "depr", Id = 0, Name = "", ValueFull = "forma deprecjatywna", Description = "forma wyrażająca lekceważnie, rzadziej forma wzniosła" };
+            public static Entry.Label Deprecating => new Entry.Label { ValueAbbr = "depr", Id = 0, Name = "deprecjatywność", ValueFull = "forma deprecjatywna", Description = "forma wyrażająca lekceważnie, rzadziej forma wzniosła" };
             public static Entry.Label Fragment => new Entry.Label { ValueAbbr = "frag", Id = 0, Name = "", ValueFull = "burkinostka", Description = "wyraz występujący zawsze w połączeniu z innym" };
             public static Entry.Label Pewien => new Entry.Label { ValueAbbr = "adjc", Id = 0, Name = "", ValueFull = "forma dawnej, rzeczownikowej odmiany przymiotników", Description = "" };
             public static Entry.Label Polsku => new Entry.Label { ValueAbbr = "adjp", Id = 0, Name = "", ValueFull = "forma odprzymiotnikowa zakończona na »-u«", Description = "" };
@@ -202,7 +205,7 @@ namespace Dictionary.Service.FormProcessors
 
 
 
-        internal static class Pos //część mowy i derywaty
+        internal static class Pos //część mowy 
         {
             public static Entry.Label Noun => new Entry.Label { ValueAbbr = "subst", Id = 0, Name = "część mowy", ValueFull = "rzeczownik" };
             public static Entry.Label Numeral => new Entry.Label { ValueAbbr = "num", Id = 0, Name = "część mowy", ValueFull = "liczebnik" };
@@ -211,6 +214,7 @@ namespace Dictionary.Service.FormProcessors
             public static Entry.Label Adjective => new Entry.Label { ValueAbbr = "adj", Id = 0, Name = "część mowy", ValueFull = "przymiotnik" };
             public static Entry.Label Adverb => new Entry.Label { ValueAbbr = "adv", Id = 0, Name = "część mowy", ValueFull = "przysłówek" };
             public static Entry.Label Particle => new Entry.Label { ValueAbbr = "part", Id = 0, Name = "część mowy", ValueFull = "partykuła" };
+            public static Entry.Label Verb => new Entry.Label { ValueAbbr = "verb", Id = 0, Name = "część mowy", ValueFull = "czasownik" };
 
             public static Entry.Label Ppron12 => new Entry.Label { ValueAbbr = "ppron12", Id = 0, Name = "część mowy", ValueFull = "zaimek 1. lub 2. osoby" };
             public static Entry.Label Ppron3 => new Entry.Label { ValueAbbr = "ppron3", Id = 0, Name = "część mowy", ValueFull = "zaimek 3. osoby" };

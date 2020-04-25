@@ -9,20 +9,28 @@ namespace Dictionary.Service.FormProcessors
     {
 
 
-        private static void addStyleLabel(this Entry.Form entryForm, Form formFromDb, string ifContains, string valueFull, string valueAbbr = "", string description = "")
+        private static Entry.Form addStyleLabel(Entry.Form entryForm, Form formFromDb, string ifContains, string valueFull, string valueAbbr = "", string description = "")
         {
+            if (formFromDb.Labels == null) return entryForm;
 
-            if (formFromDb.Categories.Contains(ifContains) && formFromDb.Labels.Contains(ifContains))
+            if (formFromDb.Labels.Contains(ifContains))
             {
-                entryForm.Categories.Append(new Entry.Label
+                if (entryForm.Categories == null) entryForm.Categories = new List<Entry.Label>();
+
+                var newEntryLabel = new Entry.Label
                 {
-                    Id = 0,
+                    Id = entryForm.Categories.Count(),
                     Name = "styl",
                     Description = description,
-                    ValueAbbr = string.IsNullOrWhiteSpace(valueAbbr) ? ifContains : valueAbbr,
+                    ValueAbbr = string.IsNullOrEmpty(valueAbbr) ? ifContains : valueAbbr,
                     ValueFull = valueFull
-                });
+                };
+
+                entryForm.Categories = entryForm.Categories.Add(newEntryLabel);
             }
+
+            return entryForm;
+
         }
 
 
@@ -31,20 +39,19 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formsFromDb.SelectMany(x => x.Categories).Contains("imperf"))
             {
-                entry.Labels.Append(LabelPrototypes.Aspect.Imperf);
+                entry.Labels = entry.Labels.Add(LabelPrototypes.Aspect.Imperf);
             }
             else if (formsFromDb.SelectMany(x => x.Categories).Contains("perf"))
             {
-                entry.Labels.Append(LabelPrototypes.Aspect.Perf);
+                entry.Labels = entry.Labels.Add(LabelPrototypes.Aspect.Perf);
             }
         }
-
 
         public static void AddAdjcLabels(this Entry.Form entryForm, Form formFromDb)
         {
             if (formFromDb.Categories.Contains("adjc"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Other.Pewien);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Other.Pewien);
             }
         }
 
@@ -52,11 +59,11 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Categories.Contains("nakc"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Accentedness.NAcc);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Accentedness.NAcc);
             }
             else if (formFromDb.Categories.Contains("akc"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Accentedness.Acc);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Accentedness.Acc);
             }
         }
 
@@ -64,11 +71,11 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Categories.Contains("npraep"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Postprepositionness.Npraep);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Postprepositionness.Npraep);
             }
             else if (formFromDb.Categories.Contains("praep"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Postprepositionness.Praep);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Postprepositionness.Praep);
             }
         }
 
@@ -76,23 +83,23 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Categories.Contains("m1"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Gender.Masculine1);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Gender.Masculine1);
             }
             else if (formFromDb.Categories.Contains("m2"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Gender.Masculine2);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Gender.Masculine2);
             }
             else if (formFromDb.Categories.Contains("m3"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Gender.Masculine3);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Gender.Masculine3);
             }
             else if (formFromDb.Categories.Contains("f"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Gender.Feminine);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Gender.Feminine);
             }
             else if (formFromDb.Categories.Contains("n"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Gender.Neutral);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Gender.Neutral);
             }
         }
 
@@ -100,11 +107,11 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Labels.Contains("hom.") || formFromDb.Categories.Contains("hom."))
             {
-                entryForm.Categories.Append(LabelPrototypes.Uniformity.Uniform);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Uniformity.Uniform);
             }
             else if (formFromDb.Labels.Contains("char.") || formFromDb.Categories.Contains("char."))
             {
-                entryForm.Categories.Append(LabelPrototypes.Uniformity.NotUniform);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Uniformity.NotUniform);
             }
         }
 
@@ -112,47 +119,47 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Categories.Contains("depr"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Other.Deprecating);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Other.Deprecating);
             }
         }
 
         public static void AddStyleLabels(this Entry.Form entryForm, Form formFromDb)
         {
-            entryForm.addStyleLabel(formFromDb, "daw.", "dawne");
-            entryForm.addStyleLabel(formFromDb, "rzad.", "rzadkie");
-            entryForm.addStyleLabel(formFromDb, "przest.", "przestarzałe");
-            entryForm.addStyleLabel(formFromDb, "pot.", "potoczne");
-            entryForm.addStyleLabel(formFromDb, "arch.", "archaiczne");
-            entryForm.addStyleLabel(formFromDb, "hist.", "historyczne");
-            entryForm.addStyleLabel(formFromDb, "przen.", "przenośne");
-            entryForm.addStyleLabel(formFromDb, "żart.", "żartobliwe");
-            entryForm.addStyleLabel(formFromDb, "daw._dziś_gwar.", "dawne, obecnie gwarowe", "daw., dziś gwar.");
-            entryForm.addStyleLabel(formFromDb, "arch._(tylko_po_\"ku\")", "archaiczne, tylko po przyimku »ku«", "arch., tylko po »ku«");
-            entryForm.addStyleLabel(formFromDb, "przest._dziś_książk.", "przestarzałe, obecnie książkowe", "przest., dziś książk.");
-            entryForm.addStyleLabel(formFromDb, "gwar.", "gwarowe");
-            entryForm.addStyleLabel(formFromDb, "pogard.", "pogardliwe");
-            entryForm.addStyleLabel(formFromDb, "książk.", "książkowe");
-            entryForm.addStyleLabel(formFromDb, "erud.", "erudycyjne");
-            entryForm.addStyleLabel(formFromDb, "reg.", "regionalne");
-            entryForm.addStyleLabel(formFromDb, "indyw.", "indywidualne");
-            entryForm.addStyleLabel(formFromDb, "lekcew.", "lekceważące");
-            entryForm.addStyleLabel(formFromDb, "fraz.", "frazeologizm");
-            entryForm.addStyleLabel(formFromDb, "środ.", "środowiskowe");
-            entryForm.addStyleLabel(formFromDb, "wulg.", "wulgarne");
-            entryForm.addStyleLabel(formFromDb, "niepopr.", "niepoprawne");
-            entryForm.addStyleLabel(formFromDb, "iron.", "ironiczne");
-            entryForm.addStyleLabel(formFromDb, "slang", "slangowe");
-            entryForm.addStyleLabel(formFromDb, "rub.", "rubaszne");
-            entryForm.addStyleLabel(formFromDb, "euf.", "eufemistyczne");
-            entryForm.addStyleLabel(formFromDb, "daw._dziś_środ.", "dawne, obecnie środowiskowe", "daw., dziś środ.");
-            entryForm.addStyleLabel(formFromDb, "poet.", "poetyckie");
-            entryForm.addStyleLabel(formFromDb, "form.", "formalne");
-            entryForm.addStyleLabel(formFromDb, "daw._dziś_rzad.", "dawne, obecnie rzadkie", "daw., dziś rzad.");
-            entryForm.addStyleLabel(formFromDb, "pisane_łącznie_z_przyimkiem", "pisane łącznie z przyimkiem", "pis. łącz. z przyim.");
-            entryForm.addStyleLabel(formFromDb, "daw._dziś_fraz.", "dawne, obecnie we frazeologizmie", "daw., dziś fraz.");
-            entryForm.addStyleLabel(formFromDb, "przest._dziś_gwar.", "przestarzałe, obecnie gwarowe", "przest., dziś gwar.");
-            entryForm.addStyleLabel(formFromDb, "po_liczebniku", "po liczebniku", "po liczeb.");
-            entryForm.addStyleLabel(formFromDb, "podniosłe", "podniosłe", "podn.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "daw.", "dawne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "rzad.", "rzadkie");
+            entryForm = addStyleLabel(entryForm, formFromDb, "przest.", "przestarzałe");
+            entryForm = addStyleLabel(entryForm, formFromDb, "pot.", "potoczne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "arch.", "archaiczne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "hist.", "historyczne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "przen.", "przenośne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "żart.", "żartobliwe");
+            entryForm = addStyleLabel(entryForm, formFromDb, "daw._dziś_gwar.", "dawne, obecnie gwarowe", "daw., dziś gwar.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "arch._(tylko_po_\"ku\")", "archaiczne, tylko po przyimku »ku«", "arch., tylko po »ku«");
+            entryForm = addStyleLabel(entryForm, formFromDb, "przest._dziś_książk.", "przestarzałe, obecnie książkowe", "przest., dziś książk.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "gwar.", "gwarowe");
+            entryForm = addStyleLabel(entryForm, formFromDb, "pogard.", "pogardliwe");
+            entryForm = addStyleLabel(entryForm, formFromDb, "książk.", "książkowe");
+            entryForm = addStyleLabel(entryForm, formFromDb, "erud.", "erudycyjne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "reg.", "regionalne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "indyw.", "indywidualne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "lekcew.", "lekceważące");
+            entryForm = addStyleLabel(entryForm, formFromDb, "fraz.", "frazeologizm");
+            entryForm = addStyleLabel(entryForm, formFromDb, "środ.", "środowiskowe");
+            entryForm = addStyleLabel(entryForm, formFromDb, "wulg.", "wulgarne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "niepopr.", "niepoprawne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "iron.", "ironiczne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "slang", "slangowe");
+            entryForm = addStyleLabel(entryForm, formFromDb, "rub.", "rubaszne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "euf.", "eufemistyczne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "daw._dziś_środ.", "dawne, obecnie środowiskowe", "daw., dziś środ.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "poet.", "poetyckie");
+            entryForm = addStyleLabel(entryForm, formFromDb, "form.", "formalne");
+            entryForm = addStyleLabel(entryForm, formFromDb, "daw._dziś_rzad.", "dawne, obecnie rzadkie", "daw., dziś rzad.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "pisane_łącznie_z_przyimkiem", "pisane łącznie z przyimkiem", "pis. łącz. z przyim.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "daw._dziś_fraz.", "dawne, obecnie we frazeologizmie", "daw., dziś fraz.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "przest._dziś_gwar.", "przestarzałe, obecnie gwarowe", "przest., dziś gwar.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "po_liczebniku", "po liczebniku", "po liczeb.");
+            entryForm = addStyleLabel(entryForm, formFromDb, "podniosłe", "podniosłe", "podn.");
 
 
         }
@@ -161,15 +168,15 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Categories.Contains("pos"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Degree.Positive);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Degree.Positive);
             }
             else if (formFromDb.Categories.Contains("com"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Degree.Comparative);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Degree.Comparative);
             }
             else if (formFromDb.Categories.Contains("sup"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Degree.Superlative);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Degree.Superlative);
             }
         }
 
@@ -177,11 +184,11 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Categories.Contains("congr"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Congruence.Congruent);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Congruence.Congruent);
             }
             else if (formFromDb.Categories.Contains("rec"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Congruence.Rection);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Congruence.Rection);
             }
         }
 
@@ -189,11 +196,11 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Categories.Contains("wok"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Vocality.Vocalic);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Vocality.Vocalic);
             }
             else if (formFromDb.Categories.Contains("nwok"))
             {
-                entryForm.Categories.Append(LabelPrototypes.Vocality.NonVocalic);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Vocality.NonVocalic);
             }
         }
 
@@ -201,14 +208,21 @@ namespace Dictionary.Service.FormProcessors
         {
             if (formFromDb.Word.Contains(" "))
             {
-                entryForm.Categories.Append(LabelPrototypes.FormStructure.Analytic);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.FormStructure.Analytic);
             }
             else
             {
-                entryForm.Categories.Append(LabelPrototypes.FormStructure.Synthetic);
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.FormStructure.Synthetic);
             }
         }
 
+        public static void AddNegationLabel(this Entry.Form entryForm, Form formFromDb)
+        {
+            if (formFromDb.Word.Contains("neg"))
+            {
+                entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Derivatives.Neg);
+            }
+        }
 
 
     }

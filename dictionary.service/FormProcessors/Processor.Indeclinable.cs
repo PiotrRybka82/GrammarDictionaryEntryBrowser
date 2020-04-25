@@ -8,52 +8,46 @@ namespace Dictionary.Service.FormProcessors
 {
     internal class Indeclinable : ProcessorBase
     {
-        public Indeclinable(IEnumerable<Form> forms, Form searchedForm, string formQueryUrlBase) : base(forms, searchedForm, formQueryUrlBase) { }
+        public Indeclinable(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
+            : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
+
+
+
+        protected override void CorrectEntry(Entry entry)
+        {
+            //brak 
+        }
+
 
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
             //brak
         }
 
-        protected override void AddRelated(Entry entry)
+        protected override void AddRelateds(Entry entry)
         {
-            if (SearchedFormFirstCategory.Equals("brev"))
-            {
-                //skrót
-                var nomSg = Forms.Nom().Sg().M1().FirstOrDefault();
 
-                if (nomSg != null)
-                {
-                    entry.Relateds.Append(new Entry.Related
-                    {
-                        Categories = new[] { LabelPrototypes.Other.AbbreviationExplanation },
-                        Word = nomSg.Lemma.Form,
-                        Id = entry.Relateds.Count(),
-                        Url = Path.Combine(FormQueryUrlBase, nomSg.Lemma.Form)
-                    });
-                }
-            }
-            else if (SearchedFormFirstCategory.Equals("pant") || SearchedFormFirstCategory.Equals("pcon") || SearchedFormFirstCategory.Equals("pacta"))
-            {
-                //imiesłów przysłówkowy uprzedni || imiesłów przysłówkowy współczesny || przysłówek odimiesłowowy
-                var inf = Forms.Inf().FirstOrDefault();
+            //skrót
+            var categories = new[] { LabelPrototypes.Other.AbbreviationExplanation };
+            WordSelector = () => SearchedForm.Lemma.Form;
 
-                if (inf != null)
-                {
-                    entry.Relateds.Append(new Entry.Related
-                    {
-                        Categories = new[] { LabelPrototypes.VerbForms.BaseVerb },
-                        Id = entry.Relateds.Count(),
-                        Word = inf.Lemma.Form,
-                        Url = Path.Combine(FormQueryUrlBase, inf.Lemma.Form)
-                    });
-                }
-            }
+            AddRelated(entry, "brev", categories, WordSelector);
+
+
+            //imiesłów przysłówkowy uprzedni
+            categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
+            WordSelector = () => LexemeForms.Inf().Word();
+
+            AddRelated(entry, "pant", categories, WordSelector);
+            AddRelated(entry, "pcon", categories, WordSelector);
+            AddRelated(entry, "pacta", categories, WordSelector);
+
+
         }
 
         protected override void AddTables(Entry entry)
         {
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 Titles = new[] { LabelPrototypes.EmptyLabel },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
@@ -67,18 +61,20 @@ namespace Dictionary.Service.FormProcessors
 
         protected override IEnumerable<Entry.Form> GetTableCellForms(IEnumerable<Form> forms)
         {
-            for (int i = 0; i < forms.Count(); i++)
+            var formList = forms.ToList();
+
+            for (int i = 0; i < formList.Count(); i++)
             {
-                var newEntry = new Entry.Form
+                var entryForm = new Entry.Form
                 {
                     Id = i,
-                    Word = forms.ToList()[i].Word,
-                    Categories = new[] { LabelPrototypes.EmptyLabel }
+                    Word = formList[i].Word,
+                    Categories = new List<Entry.Label>()
                 };
 
-                newEntry.AddStyleLabels(forms.ToList()[i]);
+                entryForm.AddStyleLabels(formList[i]);
 
-                yield return newEntry;
+                yield return entryForm;
             }
         }
     }

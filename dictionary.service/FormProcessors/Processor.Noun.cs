@@ -8,50 +8,54 @@ namespace Dictionary.Service.FormProcessors
 {
     internal class Noun : ProcessorBase
     {
-        public Noun(IEnumerable<Form> forms, Form searchedForm, string formQueryUrlBase) : base(forms, searchedForm, formQueryUrlBase) { }
+        public Noun(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
+            : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
+
+
+
+        protected override void CorrectEntry(Entry entry)
+        {
+            //korekta lematu dla odsłowników
+            if (SearchedForm.Categories.Contains("ger"))
+            {
+                entry.Lemma = LexemeForms.Where(x => x.Categories.Contains("ger")).Sg().Nom().Word();
+            }
+
+
+        }
 
 
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
-            //brak
+            
+
         }
 
-        protected override void AddRelated(Entry entry)
+        protected override void AddRelateds(Entry entry)
         {
             // skrót
-            var skrot = Forms.FirstOrDefault(x => x.Categories.Contains("brev"));
+            var categories = new[] { LabelPrototypes.Other.AbbreviatedForm };
+            WordSelector = () => LexemeForms.Where(x => x.Categories.Contains("brev")).Word();
 
-            if (skrot != null)
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.Other.AbbreviatedForm },
-                    Id = entry.Relateds.Count(),
-                    Word = skrot.Word,
-                    Url = Path.Combine(FormQueryUrlBase, skrot.Word)
-                });
-            }
+            AddRelated(entry, "brev", categories, WordSelector);
+
 
             //czasownik bazowy (dla odsłowników)
-            var inf = Forms.Inf().FirstOrDefault();
-            if (SearchedForm.Categories.Contains("ger") && inf != null)
-            {
-                entry.Relateds.Append(new Entry.Related
-                {
-                    Categories = new[] { LabelPrototypes.VerbForms.BaseVerb },
-                    Id = entry.Relateds.Count(),
-                    Word = inf.Word,
-                    Url = Path.Combine(FormQueryUrlBase, inf.Word)
-                });
-            }
+            categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
+            WordSelector = () => LexemeForms.Inf().Word();
+
+            AddRelated(entry, "ger", categories, WordSelector);
+
+            
+
         }
 
         protected override void AddTables(Entry entry)
         {
             //jeśli odsłownik, wybierz tylko formy z kategorią 'ger'
-            var forms = SearchedForm.Categories.Contains("ger") ? Forms.Gerund() : Forms;
+            var forms = SearchedForm.Categories.Contains("ger") ? LexemeForms.Gerund() : LexemeForms;
 
-            entry.Tables.Append(new Entry.Table
+            entry.Tables = entry.Tables.Add(new Entry.Table
             {
                 ColumnHeaders = LabelSets.SgPl,
                 Id = 0,
@@ -101,12 +105,20 @@ namespace Dictionary.Service.FormProcessors
                 //deprecjatywność
                 newForm.AddDeprecativeLabels(forms.ToList()[i]);
 
+                //negacja
+                newForm.AddNegationLabel(forms.ToList()[i]);
+
                 //indywidualne kwalifikatory stylistyczne
                 newForm.AddStyleLabels(forms.ToList()[i]);
 
                 yield return newForm;
             }
         }
+
+
+
+
+
 
     }
 }
