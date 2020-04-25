@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\dictionary.core\dictionary.core.csproj" />
     <ProjectReference Include="..\dictionary.data\dictionary.data.csproj" />
     <ProjectReference Include="..\dictionary.service\dictionary.service.csproj" />
