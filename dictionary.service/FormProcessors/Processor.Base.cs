@@ -253,6 +253,10 @@ namespace Dictionary.Service.FormProcessors
 
             //znaczenia
             entry.Meanings = LexemeForms.SelectMany(x => x.Meanings).Distinct();
+            var temp = entry.Meanings.ToList();
+            var newMeanings = new List<string>();
+            temp.ForEach(x => newMeanings.Add(x.Replace("_", " ")));
+            entry.Meanings = newMeanings;
 
             //globalne kwalifikatory stylistyczne
             var globalLabels = FindGlobalLabels(LexemeForms).ToList();

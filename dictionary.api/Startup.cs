@@ -33,6 +33,19 @@ namespace Dictionary.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            //cors - zob. https://docs.microsoft.com/pl-pl/aspnet/core/security/cors?view=aspnetcore-3.1
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder
+                        .AllowAnyOrigin()
+                        .WithMethods(new[] { "GET" });
+                });
+            });
+
+
             //MongoDb
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
 
@@ -48,7 +61,7 @@ namespace Dictionary.Api
             services.AddTransient<IGenerator, GeneratorService>();
             services.AddTransient<ILemmatizer, LemmatizerService>();
 
-
+            
             services
                 .AddControllers()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest); //zapewnia kompatybilność ze wskazaną wersją frameworka
@@ -65,20 +78,26 @@ namespace Dictionary.Api
             {
                 app.UseHsts(); //wymusza na przeglądarce korzystanie wyłącznie z HTTPS
             }
-
+                        
             app.UseHttpsRedirection();
-
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Dictionary}/{action=Find}/{form}");
-                //endpoints.MapControllers();
+                //endpoints.MapControllerRoute(
+                //    name: "default",
+                //    pattern: "{controller=Dictionary}/{action=Find}/{form}");
+                endpoints.MapControllers();
             });
+
+            
+
+
+
         }
     }
 }
