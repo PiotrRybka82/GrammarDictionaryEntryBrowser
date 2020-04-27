@@ -257,19 +257,20 @@ namespace Dictionary.Service.FormProcessors
             foreach (var item in LexemeForms.Past().Sg().Ter())
             {
                 var newCategories = item.Categories.Replace("praet", newCategory);
-                if (additionalCategory != "") newCategories.Append(additionalCategory);
+                if (additionalCategory != "") newCategories = newCategories.Append(additionalCategory);
+
                 if (auxiliaryVerbs[0] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[0], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "pri"));
-                if (auxiliaryVerbs[1] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[1], item.Word, auxVerbInPreposition), newCategories.Replace("pri", "sec"));
-                if (auxiliaryVerbs[2] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[2], item.Word, auxVerbInPreposition), newCategories.Replace("sec", "ter"));
+                if (auxiliaryVerbs[1] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[1], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "sec"));
+                if (auxiliaryVerbs[2] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[2], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "ter"));
             }
 
             foreach (var item in LexemeForms.Past().Pl().Ter())
             {
                 var newCategories = item.Categories.Replace("praet", newCategory);
-                if (additionalCategory != "") newCategories.Append(additionalCategory);
+                if (additionalCategory != "") newCategories = newCategories.Append(additionalCategory);
                 if (auxiliaryVerbs[3] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[3], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "pri"));
-                if (auxiliaryVerbs[4] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[4], item.Word, auxVerbInPreposition), newCategories.Replace("pri", "sec"));
-                if (auxiliaryVerbs[5] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[5], item.Word, auxVerbInPreposition), newCategories.Replace("sec", "ter"));
+                if (auxiliaryVerbs[4] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[4], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "sec"));
+                if (auxiliaryVerbs[5] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[5], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "ter"));
             }
         }
 

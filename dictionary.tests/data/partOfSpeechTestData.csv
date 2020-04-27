@@ -1,33 +1,33 @@
 ﻿form,categoryAbbr,categoryFull
-dalej,interj,wykrzyknik
-dalej,adv,przysłówek
-ach,interj,wykrzyknik
-ale,interj,wykrzyknik
-ale,conj,spójnik
-amen,interj,wykrzyknik
-i,interj,wykrzyknik
-i,conj,spójnik
-nie,interj,wykrzyknik
-nie,part,partykuła
-tylko,conj,spójnik
-tylko,part,partykuła
-bo,conj,spójnik
-by,part,partykuła
-co,conj,spójnik
-jeśli,conj,spójnik
-to,part,partykuła
-cm,brev,skrót
-MB,brev,skrót
-Los,frag,burkinostka
-bin,frag,burkinostka
-dawszy,pant,imiesłów przysłówkowy uprzedni
-bojąc,pcon,imiesłów przysłówkowy współczesny
-atakująco,adv,przysłówek
-czas,subst,rzeczownik
-czas,verb,czasownik
-anektowanie,ger,odsłownik
-ciebie,pron,zaimek osobowy
-Burkina,frag,burkinostka
-pies,subst,rzeczownik
-jutro,adv,przysłówek
-prędko,adv,przysłówek
+dalej,wykrz.,wykrzyknik
+dalej,przysł.,przysłówek
+ach,wykrz.,wykrzyknik
+ale,wykrz.,wykrzyknik
+ale,spój.,spójnik
+amen,wykrz.,wykrzyknik
+i,wykrz.,wykrzyknik
+i,spój.,spójnik
+nie,wykrz.,wykrzyknik
+nie,part.,partykuła
+tylko,spój.,spójnik
+tylko,part.,partykuła
+bo,spój.,spójnik
+by,part.,partykuła
+co,spój.,spójnik
+jeśli,spój.,spójnik
+to,part.,partykuła
+cm,skr.,skrót
+MB,skr.,skrót
+Los,burk.,burkinostka
+bin,burk.,burkinostka
+dawszy,im. uprz.,imiesłów przysłówkowy uprzedni
+bojąc,im. współcz.,imiesłów przysłówkowy współczesny
+atakująco,przysł.,przysłówek
+czas,rzecz.,rzeczownik
+czas,czas.,czasownik
+anektowanie,odsł.,odsłownik
+ciebie,zaim.,zaimek osobowy
+Burkina,burk.,burkinostka
+pies,rzecz.,rzeczownik
+jutro,przysł.,przysłówek
+prędko,przysł.,przysłówek
