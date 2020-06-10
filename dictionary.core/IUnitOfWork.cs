@@ -10,7 +10,6 @@ namespace Dictionary.Core
     {
         ILemmaRepository<Lemma> Lemmas { get; }
         IFormRepository<Form> Forms { get; }
-
         Task<int> CommitAsync();
     }
 }

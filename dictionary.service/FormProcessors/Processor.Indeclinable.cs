@@ -11,38 +11,30 @@ namespace Dictionary.Service.FormProcessors
         public Indeclinable(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
-
         protected override void CorrectEntry(Entry entry)
         {
-            //brak 
+
         }
 
 
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
-            //brak
+            
         }
 
         protected override void AddRelateds(Entry entry)
         {
-
             //skrót
             var categories = new[] { LabelPrototypes.Other.AbbreviationExplanation };
             WordSelector = () => SearchedForm.Lemma.Form;
-
             AddRelated(entry, "brev", categories, WordSelector);
-
 
             //imiesłów przysłówkowy uprzedni
             categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
             WordSelector = () => LexemeForms.Inf().Word();
-
             AddRelated(entry, "pant", categories, WordSelector);
             AddRelated(entry, "pcon", categories, WordSelector);
             AddRelated(entry, "pacta", categories, WordSelector);
-
-
         }
 
         protected override void AddTables(Entry entry)

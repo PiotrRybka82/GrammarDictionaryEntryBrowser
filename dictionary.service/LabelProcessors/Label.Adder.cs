@@ -7,8 +7,6 @@ namespace Dictionary.Service.FormProcessors
 {
     public static class LabelAdder
     {
-
-
         private static Entry.Form addStyleLabel(Entry.Form entryForm, Form formFromDb, string ifContains, string valueFull, string valueAbbr = "", string description = "")
         {
             if (formFromDb.Labels == null) return entryForm;
@@ -32,8 +30,6 @@ namespace Dictionary.Service.FormProcessors
             return entryForm;
 
         }
-
-
 
         public static void AddAspectGeneralLabels(this Entry entry, IEnumerable<Form> formsFromDb)
         {
@@ -223,7 +219,5 @@ namespace Dictionary.Service.FormProcessors
                 entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Derivatives.Neg);
             }
         }
-
-
     }
 }

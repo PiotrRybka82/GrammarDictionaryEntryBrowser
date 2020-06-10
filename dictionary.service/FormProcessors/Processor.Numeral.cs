@@ -11,16 +11,14 @@ namespace Dictionary.Service.FormProcessors
         public Num(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
         protected override void CorrectEntry(Entry entry)
         {
-            //brak
-        }
 
+        }
 
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
-            //brak
+
         }
 
         protected override void AddRelateds(Entry entry)
@@ -29,15 +27,11 @@ namespace Dictionary.Service.FormProcessors
             RelatedAddingCondition = () => SearchedForm.Lemma.Form.Equals("jeden");
             var categories = new[] { LabelPrototypes.Pos.Adjective };
             WordSelector = () => "jeden";
-
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-
 
             //rzeczownik "jeden"
             categories = new[] { LabelPrototypes.Pos.Noun };
-
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-
         }
 
         protected override void AddTables(Entry entry)
@@ -63,7 +57,6 @@ namespace Dictionary.Service.FormProcessors
                         GenerateEntryTableRow(4, LabelPrototypes.Case.Instrumental, GetTableCellForms(LexemeForms.Ins())),
                         //miejscownik
                         GenerateEntryTableRow(5, LabelPrototypes.Case.Locative, GetTableCellForms(LexemeForms.Loc()))
-
                     }
                 }
             );
@@ -106,10 +99,7 @@ namespace Dictionary.Service.FormProcessors
                 }
 
                 yield return newForm;
-
             }
         }
-
-
     }
 }

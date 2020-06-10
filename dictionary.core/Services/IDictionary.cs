@@ -9,8 +9,5 @@ namespace Dictionary.Core.Services
     {
         IEnumerable<Entry> GetEntries(string form);
         Task<IEnumerable<Entry>> GetEntriesAsync(string form);
-
-        IEnumerable<Entry> GetEntries(string form, IEnumerable<string> categories = null, bool useRegEx = false);
-        Task<IEnumerable<Entry>> GetEntriesAsync(string form, IEnumerable<string> categories = null, bool useRegEx = false);
     }
 }

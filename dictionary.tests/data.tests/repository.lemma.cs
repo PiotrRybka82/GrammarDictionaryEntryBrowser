@@ -46,7 +46,6 @@ namespace Dictionary.Data.Tests
             var res = await _unitOfWork.Lemmas
                 .FirstOrDefaultAsync(x => x.Form.Equals("abak"));
 
-
             var actual = res.Tag;
             var expected = "";
 
@@ -56,13 +55,11 @@ namespace Dictionary.Data.Tests
             Assert.Equal(expected, actual);
         }
 
-
         [Fact]
-        public async Task GetAllAsync_countForms()
+        public async Task GetAllLemmasAsync_countForms()
         {
             var res = await _unitOfWork.Lemmas
-                .GetAllAsync();
-
+                .GetAllLemmasAsync();
 
             var actual = res.Count();
             var expected = 385_000;
@@ -73,8 +70,6 @@ namespace Dictionary.Data.Tests
             Assert.Equal(expected, actual);
         }
 
-
-
         [Fact]
         public async Task GetByIdAsync_lemmaEqualsByc()
         {
@@ -82,7 +77,6 @@ namespace Dictionary.Data.Tests
 
             var res = await _unitOfWork.Lemmas
                 .GetByIdAsync(id);
-
 
             var actual = res.Form;
             var expected = "abak";
@@ -93,8 +87,6 @@ namespace Dictionary.Data.Tests
             Assert.Equal(expected, actual);
         }
 
-
-
         [Fact]
         public async Task FindAsyncLemmaByc_resultsEqual2()
         {
@@ -102,7 +94,6 @@ namespace Dictionary.Data.Tests
 
             var res = await _unitOfWork.Lemmas
                 .FindAsync(x => x.Form.Equals(form));
-
 
             var actual = res.Count();
             var expected = 2;
@@ -112,7 +103,6 @@ namespace Dictionary.Data.Tests
 
             Assert.Equal(expected, actual);
         }
-
 
         [Fact]
         public async Task FindAsyncLemmaByc_lemmaEqualsByc()
@@ -126,9 +116,7 @@ namespace Dictionary.Data.Tests
             var expected = "być";
 
             Assert.Equal(expected, actual);
-
         }
-
 
         [Fact]
         public async Task FindAsyncLemmaByc_numberOfLemmasEquals1()
@@ -142,15 +130,6 @@ namespace Dictionary.Data.Tests
             var expected = 1;
 
             Assert.Equal(expected, actual);
-
         }
-
-
-
-
-
-
-
-
     }
 }

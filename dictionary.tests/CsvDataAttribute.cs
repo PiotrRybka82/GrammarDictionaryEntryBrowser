@@ -6,12 +6,6 @@ using System.Reflection;
 using System.Text;
 using Xunit.Sdk;
 
-/*
- * 
- * https://stackoverflow.com/questions/42727394/how-to-run-xunit-test-using-data-from-a-csv-file
- * 
- */
-
 namespace Dictionary.Service.Tests
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]

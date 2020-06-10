@@ -11,10 +11,7 @@ namespace Dictionary.Service.Services
     public class DictionaryService : IDictionary
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        private readonly string _formQueryUrlBase = "";
-
-        
+        private readonly string _formQueryUrlBase = "";        
 
         public DictionaryService(IUnitOfWork unitOfWork)
         {
@@ -27,45 +24,24 @@ namespace Dictionary.Service.Services
             _formQueryUrlBase = formQueryUrlBase;
         }
 
-
-
-
         public IEnumerable<Entry> GetEntries(string form)
         {
-            var homonymousForms = _unitOfWork.Forms.Find(x => x.Word.Equals(form));
-            
+            var homonymousForms = _unitOfWork.Forms.Find(x => x.Word.Equals(form));            
             var entrySeedForms = GroupForms(homonymousForms).ToList();
             
-            var entries = new List<Entry>();
-
             for (int i = 0; i < entrySeedForms.Count(); i++)
             {
                 var lexemeForms = findAllFormsOfEqualLemma(entrySeedForms[i]);
-
                 var processor = getFormProcessor(entrySeedForms[i], lexemeForms, homonymousForms, _formQueryUrlBase);
                 
                 yield return processor.GetEntry(i);
-            }
-
-            
+            }            
         }
         
-        public IEnumerable<Entry> GetEntries(string form, IEnumerable<string> categories = null, bool useRegEx = false)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public Task<IEnumerable<Entry>> GetEntriesAsync(string form)
         {
             return new Task<IEnumerable<Entry>>(() => GetEntries(form));
         }
-
-        public Task<IEnumerable<Entry>> GetEntriesAsync(string form, IEnumerable<string> categories = null, bool useRegEx = false)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
 
         protected IEnumerable<Form> GroupForms(IEnumerable<Form> foundForms)
         {
@@ -81,9 +57,7 @@ namespace Dictionary.Service.Services
                 }
                 else //formy o tym samym lemacie maj¹ inne kategorie g³ówne - zgrupuj je wg tej kategorii
                 {
-                    //wyj¹tki
-
-                    //formy adv i adja -- osobno notowany przys³ówek i przys³ówek odprzymiotnikowy
+                    //wyj¹tki: formy adv i adja -- osobno notowany przys³ówek i przys³ówek odprzymiotnikowy
                     if (foundForms.SelectMany(x => x.Categories).Contains("adv") && foundForms.SelectMany(x => x.Categories).Contains("adja"))
                     {
                         yield return group.First();
@@ -94,13 +68,8 @@ namespace Dictionary.Service.Services
 
                     foreach (var subgroup in subgroups) yield return subgroup.First();
                 }
-
             }
-
         }
-
-
-
 
         #region private auxiliary methods
 
@@ -109,9 +78,7 @@ namespace Dictionary.Service.Services
             return _unitOfWork
                 .Forms
                 .Find(x => x.Lemma.Form.Equals(formSeed.Lemma.Form) && x.Lemma.Tag.Equals(formSeed.Lemma.Tag));
-        }
-
-        
+        }        
 
         private ProcessorBase getFormProcessor(Form entrySeed, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
         {
@@ -138,7 +105,5 @@ namespace Dictionary.Service.Services
         }
 
         #endregion
-
-
     }
 }

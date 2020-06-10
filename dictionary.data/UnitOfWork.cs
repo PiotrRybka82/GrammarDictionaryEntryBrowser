@@ -20,7 +20,6 @@ namespace Dictionary.Data
             _context = new MongoDbContext(settings);
         }
 
-
         public ILemmaRepository<Lemma> Lemmas => _lemmasRepository = _lemmasRepository ?? new LemmasRepository(_context);
         public IFormRepository<Form> Forms => _formsRepository = _formsRepository ?? new FormsRepository(_context);
 

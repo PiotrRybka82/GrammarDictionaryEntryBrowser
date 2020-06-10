@@ -8,43 +8,33 @@ namespace Dictionary.Service.FormProcessors
 {
     internal class VerbPred : Verb
     {
-
         public VerbPred(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
-
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
-            //brak
+
         }
 
         protected override void AddRelateds(Entry entry)
         {
-            //leksem homonimiczny
+            //leksem homonimiczny: czasownik
             RelatedAddingCondition = () => HomonymousForms.SelectMany(x => x.Categories).Contains("inf"); //czasownik
             var categories = new[] { LabelPrototypes.Pos.Verb };
             WordSelector = () => HomonymousForms.Inf().Word();
-
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
-
-
+            //leksem homonimiczny: rzeczownik
             RelatedAddingCondition = () => HomonymousForms.SelectMany(x => x.Categories).Contains("subst"); //rzeczownik
             categories = new[] { LabelPrototypes.Pos.Noun };
             WordSelector = () => HomonymousForms.Where(x => x.Categories.Contains("subst")).Word();
-
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
-
+            //leksem homonimiczny: odsłownik
             RelatedAddingCondition = () => HomonymousForms.SelectMany(x => x.Categories).Contains("ger"); //odsłownik
             categories = new[] { LabelPrototypes.VerbForms.Gerund };
             WordSelector = () => HomonymousForms.Where(x => x.Categories.Contains("ger")).Word();
-
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-
-
-
         }
 
         protected override void AddTables(Entry entry)
@@ -59,7 +49,7 @@ namespace Dictionary.Service.FormProcessors
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Ind().Pres()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Pres()))
                 }
             });
 
@@ -71,7 +61,7 @@ namespace Dictionary.Service.FormProcessors
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Ind().Past()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Past()))
                 }
             });
 
@@ -83,7 +73,7 @@ namespace Dictionary.Service.FormProcessors
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
                 {
-                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Ind().Fut()))
+                    GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Fut()))
                 }
             });
 
@@ -137,22 +127,14 @@ namespace Dictionary.Service.FormProcessors
 
         }
 
-        // protected override IEnumerable<Entry.Form> GetTableCellForms(IEnumerable<Form> forms)
-        // {
-        //     throw new NotImplementedException();
-        // }
-
-
-
-
         private void addAdditionalForms()
         {
             var aspect = GetAspect();
             string baseWord = LexemeForms.Where(x => x.Categories.Contains("pred")).Word();
 
             //tryb ozn., czas ter. (brak [jest])
-            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "(jest)"), aspect.Append("fin"));
-            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "(jest)", false), aspect.Append("fin"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "(jest)"), aspect.Add("fin"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "(jest)", false), aspect.Add("fin"));
 
             //tryb ozn., czas przesz. (brak było)
             SupplementLexemeForms(JoinAnalyticalForms(baseWord, "było"), aspect.Append("praet"));
@@ -167,23 +149,15 @@ namespace Dictionary.Service.FormProcessors
             SupplementLexemeForms(JoinAnalyticalForms(baseWord, "by", false), aspect.Append("cond"));
 
             //tryb przyp., czas przesz. (byłoby brak)
-            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "byłoby"), aspect.Append("cond").Append("praet"));
-            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "byłoby", false), aspect.Append("cond").Append("praet"));
-            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "by było", false), aspect.Append("cond").Append("praet"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "byłoby"), aspect.Append("praet cond"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "byłoby", false), aspect.Append("praet cond"));
+            SupplementLexemeForms(JoinAnalyticalForms(baseWord, "by było", false), aspect.Append("praet cond"));
 
             //tryb rozkaz. (niech będzie brak)
             SupplementLexemeForms(JoinAnalyticalForms(baseWord, "niech będzie", false), aspect.Append("impt"));
 
             //bezokolicznik (być brak)
             SupplementLexemeForms(JoinAnalyticalForms(baseWord, "być", false), aspect.Append("inf"));
-
-
         }
-
-
-
-
     }
-
-
 }

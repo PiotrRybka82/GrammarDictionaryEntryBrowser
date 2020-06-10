@@ -10,21 +10,19 @@ namespace Dictionary.Service.FormProcessors
         public Pron3(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
         protected override void CorrectEntry(Entry entry)
         {
-            //brak 
-        }
 
+        }
 
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
-            //brak
+
         }
 
         protected override void AddRelateds(Entry entry)
         {
-            //brak
+
         }
 
         protected override void AddTables(Entry entry)
@@ -35,7 +33,7 @@ namespace Dictionary.Service.FormProcessors
                 Titles = new[] { LabelPrototypes.EmptyLabel },
                 ColumnHeaders = new[] { LabelPrototypes.EmptyLabel },
                 Rows = new[]
-                            {
+                {
                     //mianownik
                     GenerateEntryTableRow(0, LabelPrototypes.Case.Nominative, GetTableCellForms(LexemeForms.Nom()) ),
 
@@ -53,7 +51,6 @@ namespace Dictionary.Service.FormProcessors
 
                     //miejscownik
                     GenerateEntryTableRow(5, LabelPrototypes.Case.Locative, GetTableCellForms(LexemeForms.Loc()) )
-
                 }
             });
         }

@@ -6,7 +6,6 @@ namespace Dictionary
 {
     public static class LinqExtensions
     {
-
         public static IEnumerable<T> Clone<T>(this IEnumerable<T> objs) where T : ICloneable
         {
             foreach (var item in objs)
@@ -25,20 +24,6 @@ namespace Dictionary
             return temp;
         }
 
-
-        //public static IEnumerable<T> Remove<T>(this IEnumerable<T> objs, T obj)
-        //{
-        //    var newObjs = new List<T>();
-
-        //    foreach (var item in objs)
-        //    {
-        //        if (!item.Equals(obj)) newObjs.Add(item);
-
-        //    }
-
-        //    return newObjs;
-        //}
-
         public static IEnumerable<T> Add<T>(this IEnumerable<T> objs, T obj)
         {
             var temp = objs.ToList();
@@ -46,8 +31,5 @@ namespace Dictionary
 
             return objs;
         }
-
-
-
     }
 }

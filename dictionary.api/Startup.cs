@@ -33,8 +33,6 @@ namespace Dictionary.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            //cors - zob. https://docs.microsoft.com/pl-pl/aspnet/core/security/cors?view=aspnetcore-3.1
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -45,26 +43,21 @@ namespace Dictionary.Api
                 });
             });
 
-
             //MongoDb
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));
 
+            //dane dostepowe do bazy danych
             services.AddSingleton<IDatabaseSettings>(dbSettings => dbSettings.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-
 
             //unit of work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-
             //core
             services.AddTransient<IDictionary, DictionaryService>();
-            services.AddTransient<IGenerator, GeneratorService>();
-            services.AddTransient<ILemmatizer, LemmatizerService>();
-
-            
+                        
             services
                 .AddControllers()
-                .SetCompatibilityVersion(CompatibilityVersion.Latest); //zapewnia kompatybilność ze wskazaną wersją frameworka
+                .SetCompatibilityVersion(CompatibilityVersion.Latest); //zapewnia kompatybilnosc ze wskazana wersja frameworka
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,7 +69,7 @@ namespace Dictionary.Api
             }
             else
             {
-                app.UseHsts(); //wymusza na przeglądarce korzystanie wyłącznie z HTTPS
+                app.UseHsts(); //wymusza na przegladarce korzystanie wyłacznie z HTTPS
             }
                         
             app.UseHttpsRedirection();
@@ -88,16 +81,8 @@ namespace Dictionary.Api
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapControllerRoute(
-                //    name: "default",
-                //    pattern: "{controller=Dictionary}/{action=Find}/{form}");
                 endpoints.MapControllers();
-            });
-
-            
-
-
-
+            });  
         }
     }
 }

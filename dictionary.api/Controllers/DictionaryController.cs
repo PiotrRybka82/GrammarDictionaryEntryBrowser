@@ -30,28 +30,18 @@ namespace Dictionary.Api.Controllers
             return "Here is the New Grammatical Dictionary of Polish";
         }
 
-        //dictionary/find?form=
-        
+        //dictionary/browser/find?form=        
         [HttpGet("browser/find")]
-        //public async Task<IEnumerable<object>> Find(string form = "")
         public IEnumerable<Entry> Find(string form = "")
         {
-            //return new[] { form };
-
             if (form != "")
             {
-                //return await _dictionary.GetEntriesAsync(form);
                 return _dictionary.GetEntries(form);
             }
             else
             {
                 return null;
             }
-
         }
-
-
-
-
     }
 }

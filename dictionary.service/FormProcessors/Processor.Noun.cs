@@ -11,48 +11,36 @@ namespace Dictionary.Service.FormProcessors
         public Noun(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
-
         protected override void CorrectEntry(Entry entry)
         {
-            //korekta lematu dla odsłowników
+            //korekta lematu dla odslownikow
             if (SearchedForm.Categories.Contains("ger"))
             {
                 entry.Lemma = LexemeForms.Where(x => x.Categories.Contains("ger")).Sg().Nom().Word();
             }
-
-
         }
 
-
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
-        {
-            
+        {           
 
         }
 
         protected override void AddRelateds(Entry entry)
         {
-            // skrót
+            // skrot
             var categories = new[] { LabelPrototypes.Other.AbbreviatedForm };
             WordSelector = () => LexemeForms.Where(x => x.Categories.Contains("brev")).Word();
-
             AddRelated(entry, "brev", categories, WordSelector);
 
-
-            //czasownik bazowy (dla odsłowników)
+            //czasownik bazowy (dla odslownikow)
             categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
             WordSelector = () => LexemeForms.Inf().Word();
-
-            AddRelated(entry, "ger", categories, WordSelector);
-
-            
-
+            AddRelated(entry, "ger", categories, WordSelector);       
         }
 
         protected override void AddTables(Entry entry)
         {
-            //jeśli odsłownik, wybierz tylko formy z kategorią 'ger'
+            //jesli odslownik, wybierz tylko formy z kategoria 'ger'
             var forms = SearchedForm.Categories.Contains("ger") ? LexemeForms.Gerund() : LexemeForms;
 
             entry.Tables = entry.Tables.Add(new Entry.Table
@@ -65,7 +53,7 @@ namespace Dictionary.Service.FormProcessors
                     //mianownik
                     GenerateEntryTableRow(0, LabelPrototypes.Case.Nominative, GetTableCellForms(forms.Sg().Nom()), GetTableCellForms(forms.Pl().Nom()) ),
 
-                    //dopełniacz
+                    //dopelniacz
                     GenerateEntryTableRow(1, LabelPrototypes.Case.Genitive, GetTableCellForms(forms.Sg().Gen()), GetTableCellForms(forms.Pl().Gen()) ),
 
                     //celownik
@@ -74,13 +62,13 @@ namespace Dictionary.Service.FormProcessors
                     //biernik
                     GenerateEntryTableRow(3, LabelPrototypes.Case.Accusative, GetTableCellForms(forms.Sg().Acc()), GetTableCellForms(forms.Pl().Acc()) ),
 
-                    //narzędnik
+                    //narzednik
                     GenerateEntryTableRow(4, LabelPrototypes.Case.Instrumental, GetTableCellForms(forms.Sg().Ins()), GetTableCellForms(forms.Pl().Ins()) ),
 
                     //miejscownik
                     GenerateEntryTableRow(5, LabelPrototypes.Case.Locative, GetTableCellForms(forms.Sg().Loc()), GetTableCellForms(forms.Pl().Loc()) ),
 
-                    //wołacz
+                    //wolacz
                     GenerateEntryTableRow(6, LabelPrototypes.Case.Vocative, GetTableCellForms(forms.Sg().Voc()), GetTableCellForms(forms.Pl().Voc()) )
                 }
             });
@@ -102,7 +90,7 @@ namespace Dictionary.Service.FormProcessors
                 //uniformizm
                 newForm.AddUniformityLabels(forms.ToList()[i]);
 
-                //deprecjatywność
+                //deprecjatywnosc
                 newForm.AddDeprecativeLabels(forms.ToList()[i]);
 
                 //negacja
@@ -114,11 +102,5 @@ namespace Dictionary.Service.FormProcessors
                 yield return newForm;
             }
         }
-
-
-
-
-
-
     }
 }

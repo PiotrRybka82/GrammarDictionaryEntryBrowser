@@ -340,7 +340,7 @@ namespace Dictionary.Service.Tests
             _processorBase.AddGeneralLabels(entry);
 
             var actual = entry.Meanings.First();
-            var expected = "nazwa_pospolita";
+            var expected = "nazwa pospolita";
 
             Assert.Equal(expected, actual);
         }

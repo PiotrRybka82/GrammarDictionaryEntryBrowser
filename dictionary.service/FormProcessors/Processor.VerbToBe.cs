@@ -26,12 +26,7 @@ namespace Dictionary.Service.FormProcessors
                 categories.Remove("aglt");
                 categories.Prepend("fin");
                 SupplementLexemeForms(form.Word + " " + (form.Categories.Contains("sg") ? "jest" : "są"), categories);
-            }
-
-                                                  
+            }                                                  
         }
-
-
-
     }
 }

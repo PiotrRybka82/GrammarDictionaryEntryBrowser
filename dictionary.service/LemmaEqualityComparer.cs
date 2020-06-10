@@ -10,6 +10,10 @@ namespace Dictionary.Service
     {
         public bool Equals([AllowNull] Lemma x, [AllowNull] Lemma y)
         {
+            if (x == null && y == null) return true;
+
+            if (x == null || y == null) return false;
+
             return
                 x.Form.Equals(y.Form) &&
                 x.Tag.Equals(y.Tag);

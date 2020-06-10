@@ -8,30 +8,28 @@ namespace Dictionary.Service.FormProcessors
 {
     internal class Verb : ProcessorBase
     {
-        protected string[] _auxiliaryVerbs = new[] {
-                    "był", "był", "był", "była", "było",
-                    "był", "był", "był", "była", "było",
-                    "był", "był", "był", "była", "było",
-                    "byli", "były", "były", "były", "były",
-                    "byli", "były", "były", "były", "były",
-                    "byli", "były", "były", "były", "były" };
-
+        protected string[] _auxiliaryVerbs = new[]
+        {
+            "był", "był", "był", "była", "było",
+            "był", "był", "był", "była", "było",
+            "był", "był", "był", "była", "było",
+            "byli", "były", "były", "były", "były",
+            "byli", "były", "były", "były", "były",
+            "byli", "były", "były", "były", "były"
+        };
 
         public Verb(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
         protected override void CorrectEntry(Entry entry)
         {
-            //brak 
-        }
 
+        }
 
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
             entry.AddAspectGeneralLabels(LexemeForms);
         }
-
 
         protected override void AddRelateds(Entry entry)
         {
@@ -42,7 +40,6 @@ namespace Dictionary.Service.FormProcessors
             AddRelatedNouns(entry);
 
         }
-
 
         protected override void AddTables(Entry entry)
         {
@@ -193,7 +190,6 @@ namespace Dictionary.Service.FormProcessors
 
         }
 
-
         protected override IEnumerable<Entry.Form> GetTableCellForms(IEnumerable<Form> forms)
         {
             int x;
@@ -258,7 +254,6 @@ namespace Dictionary.Service.FormProcessors
             {
                 var newCategories = item.Categories.Replace("praet", newCategory);
                 if (additionalCategory != "") newCategories = newCategories.Append(additionalCategory);
-
                 if (auxiliaryVerbs[0] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[0], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "pri"));
                 if (auxiliaryVerbs[1] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[1], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "sec"));
                 if (auxiliaryVerbs[2] != "") SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[2], item.Word, auxVerbInPreposition), newCategories.Replace("ter", "ter"));
@@ -290,14 +285,13 @@ namespace Dictionary.Service.FormProcessors
             for (int i = 0; i < auxiliaryVerbs.Count(); i++)
             {
                 var newCategories = mainVerbs[i].Categories;
-                
+
                 if (oldCat == "") newCategories = newCategories.Add(newCat);
                 else newCategories = newCategories.Replace(oldCat, newCat);
 
                 SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerbs[i], mainVerbs[i].Word, auxVerbInPreposition), newCategories);
             }
         }
-
 
         protected string JoinAnalyticalForms(string form1, string form2, bool form12order = true)
         {
@@ -307,36 +301,42 @@ namespace Dictionary.Service.FormProcessors
 
         protected virtual IEnumerable<Form> GetFullParadigm(IEnumerable<Form> forms)
         {
+            //pierwsza osoba liczby pojedynczej
             yield return forms.Sg().Pri().M1().First();
             yield return forms.Sg().Pri().M2().First();
             yield return forms.Sg().Pri().M3().First();
             yield return forms.Sg().Pri().F().First();
             yield return forms.Sg().Pri().N().First();
 
+            //druga osoba liczby pojedynczej
             yield return forms.Sg().Sec().M1().First();
             yield return forms.Sg().Sec().M2().First();
             yield return forms.Sg().Sec().M3().First();
             yield return forms.Sg().Sec().F().First();
             yield return forms.Sg().Sec().N().First();
 
+            //trzecia osoba liczby pojedynczej
             yield return forms.Sg().Ter().M1().First();
             yield return forms.Sg().Ter().M2().First();
             yield return forms.Sg().Ter().M3().First();
             yield return forms.Sg().Ter().F().First();
             yield return forms.Sg().Ter().N().First();
 
+            //pierwsza osoba liczby mnogiej
             yield return forms.Pl().Pri().M1().First();
             yield return forms.Pl().Pri().M2().First();
             yield return forms.Pl().Pri().M3().First();
             yield return forms.Pl().Pri().F().First();
             yield return forms.Pl().Pri().N().First();
 
+            //druga osoba liczby mnogiej
             yield return forms.Pl().Sec().M1().First();
             yield return forms.Pl().Sec().M2().First();
             yield return forms.Pl().Sec().M3().First();
             yield return forms.Pl().Sec().F().First();
             yield return forms.Pl().Sec().N().First();
 
+            //trzecia osoba liczby mnogiej
             yield return forms.Pl().Ter().M1().First();
             yield return forms.Pl().Ter().M2().First();
             yield return forms.Pl().Ter().M3().First();
@@ -355,14 +355,11 @@ namespace Dictionary.Service.FormProcessors
             addRelated(entry, getSgNom(gerunds.NotNeg()), new[] { LabelPrototypes.VerbForms.Gerund });
             addRelated(entry, getSgNom(gerunds.Neg()), new[] { LabelPrototypes.VerbForms.Gerund, LabelPrototypes.Derivatives.Neg });
 
-
             RelatedAddingCondition = () => SearchedForm.Categories.Contains("pred");
             var categories = new[] { LabelPrototypes.Pos.Noun };
             WordSelector = () => HomonymousForms.Where(x => x.Categories.Contains("subst")).Word();
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-
-            
         }
 
         protected void AddRelatedParticiples(Entry entry)
@@ -373,18 +370,23 @@ namespace Dictionary.Service.FormProcessors
             var antPartLab = LabelPrototypes.VerbForms.Participle.Anterior;
             var negLab = LabelPrototypes.Derivatives.Neg;
 
+            //imiesłowy przymiotnikowe czynne
             var actPartic = (LexemeForms.ParticAct().NotNeg(), new[] { actPartLab });
             var negActPartic = (LexemeForms.ParticAct().Neg(), new[] { actPartLab, negLab });
 
+            //imiesłowy przymiotnikowe bierne
             var pasPartic = (LexemeForms.ParticPas().NotNeg(), new[] { pasPartLab });
             var negPasPartic = (LexemeForms.ParticPas().Neg(), new[] { pasPartLab, negLab });
 
+            //imiesłowy przysłówkowe uprzednie
             var antPartic = (LexemeForms.ParticAnt().NotNeg(), new[] { antPartLab });
             var negAntPartic = (LexemeForms.ParticAnt().Neg(), new[] { antPartLab, negLab });
 
+            //imiesłowy przysłówkowe współczesne
             var conPartic = (LexemeForms.ParticCon().NotNeg(), new[] { conPartLab });
             var negConPartic = (LexemeForms.ParticCon().Neg(), new[] { conPartLab, negLab });
 
+            //wybieranie mianownika liczby pojedynczej rodzaju męskoosobowego
             Func<IEnumerable<Form>, string> getSgNomM1 = (x) => x.Sg().Nom().M1().Word();
 
             addRelated(entry, getSgNomM1(actPartic.Item1), actPartic.Item2);
@@ -395,14 +397,10 @@ namespace Dictionary.Service.FormProcessors
             addRelated(entry, getSgNomM1(negAntPartic.Item1), negAntPartic.Item2);
             addRelated(entry, getSgNomM1(conPartic.Item1), conPartic.Item2);
             addRelated(entry, getSgNomM1(negConPartic.Item1), negConPartic.Item2);
-
         }
-
-
 
         private void addAdditionalForms()
         {
-
             //czas przyszły (będę pisać, pisał...)
             if (!SearchedForm.Lemma.Form.Equals("być")) //wyjątek: formy "być" (mają osobne formy czasu przysz.)
             {
@@ -417,21 +415,20 @@ namespace Dictionary.Service.FormProcessors
             //em pisał, m pisał
             AddAnalyticalForms(new[] { "em", "eś", "", "eśmy", "eście", "" }, "praet", "wok");
             AddAnalyticalForms(new[] { "m", "ś", "", "śmy", "ście", "" }, "praet", "nwok");
+                       
+            if (!SearchedForm.Lemma.Form.Equals("być")) //wyjątek: formy "być" nie mają form czasu zaprzeszłego i przeszłego w trybie warunkowym
+            {
+                //pisałem był...
+                AddAnalyticalForms(_auxiliaryVerbs, GetFullParadigm(LexemeForms.Past()).ToArray(), "praet", "plus", false);
 
-            //pisałem był...
-            AddAnalyticalForms(_auxiliaryVerbs, GetFullParadigm(LexemeForms.Past()).ToArray(), "praet", "plus", false);
+                //bym pisał 
+                AddAnalyticalForms(new[] { "bym", "byś", "by", "byśmy", "byście", "by" }, "cond");
 
-            //bym pisał --do uzupełnienia
+                //pisałbym był
+                AddAnalyticalForms(_auxiliaryVerbs, GetFullParadigm(LexemeForms.CondNonPast()).ToArray(), "cond", "praet cond", false);
+            }            
 
-            //pisałbym był
-            AddAnalyticalForms(_auxiliaryVerbs, GetFullParadigm(LexemeForms.CondNonPast()).ToArray(), "", "praet", false);
-
-
-            //byłbym pisał --do uzupełnienia
-
-            //bym był pisał --do uzupełnienia
-
-            //niech piszę, niesz pisze, niech piszą            
+            //niech piszę, niech pisze, niech piszą            
             var presentSgPri = LexemeForms.Pres().Sg().Pri().Word(); //piszę, mówię, siedzę
             var presentSgTer = LexemeForms.Pres().Sg().Ter().Word(); //pisze, mówi, siedzi
             var presentPlTer = LexemeForms.Pres().Pl().Ter().Word(); //piszą, mówią, siedzą
@@ -439,10 +436,7 @@ namespace Dictionary.Service.FormProcessors
             SupplementLexemeForms(JoinAnalyticalForms("niech", presentSgPri), new[] { "impt", "sg", "pri" });
             SupplementLexemeForms(JoinAnalyticalForms("niech", presentSgTer), new[] { "impt", "sg", "ter" });
             SupplementLexemeForms(JoinAnalyticalForms("niech", presentPlTer), new[] { "impt", "pl", "ter" });
-
-
         }
-
 
         private void addRelated(Entry entry, string word, Entry.Label[] categories)
         {
@@ -459,8 +453,5 @@ namespace Dictionary.Service.FormProcessors
                 );
             }
         }
-
-
-
     }
 }

@@ -10,11 +10,9 @@ namespace Dictionary.Service.FormProcessors
     {
         public Adj(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) 
-        {
-            //filtrowanie form stopnia: 
-            FilterOutDegreeForms();            
+        {            
+            FilterOutDegreeForms(); //filtrowanie form stopnia            
         }
-
 
         protected override void CorrectEntry(Entry entry)
         {
@@ -22,13 +20,11 @@ namespace Dictionary.Service.FormProcessors
             CorrectEntryLemmaOfComparables(entry);
         }
 
-
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
             //brak
 
         }
-
         
         protected override void AddRelateds(Entry entry)
         {
@@ -38,7 +34,6 @@ namespace Dictionary.Service.FormProcessors
             WordSelector = () => LexemeForms.Inf().Word();
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-
 
             //jeśli forma zanegowana -> dodaj formę niezanegowaną
             RelatedAddingCondition = () => SearchedForm.Categories.Contains("neg");
@@ -57,8 +52,6 @@ namespace Dictionary.Service.FormProcessors
             }
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-            
-
 
             //forma na -u
             categories = new[] { LabelPrototypes.Other.Polsku };
@@ -66,13 +59,11 @@ namespace Dictionary.Service.FormProcessors
 
             AddRelated(entry, "adjp", categories, WordSelector);
 
-
             //przysłówek derywowany
             categories = new[] { LabelPrototypes.Pos.Adverb };
             WordSelector = () => LexemeForms.AdjBAdv().Word();
 
             AddRelated(entry, "adja", categories, WordSelector);
-
 
             //stopień równy
             RelatedAddingCondition = () =>
@@ -83,7 +74,6 @@ namespace Dictionary.Service.FormProcessors
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
-
             //stopień wyższy
             RelatedAddingCondition = () =>
                 AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("com") &&
@@ -93,7 +83,6 @@ namespace Dictionary.Service.FormProcessors
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
-
             //stopień najwyższy
             RelatedAddingCondition = () =>
                 AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("sup") &&
@@ -102,9 +91,6 @@ namespace Dictionary.Service.FormProcessors
             WordSelector = () => AdditionalLexemeEqualForms.Super().Sg().Nom().M1().Word();
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-
-
-
         }
 
         protected override void AddTables(Entry entry)
@@ -162,7 +148,6 @@ namespace Dictionary.Service.FormProcessors
                 newForm.AddStyleLabels(forms.ToList()[i]);
 
                 yield return newForm;
-
             }
         }
     }

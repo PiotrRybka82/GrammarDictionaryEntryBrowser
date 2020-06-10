@@ -50,9 +50,7 @@ namespace Dictionary.Data
 
         public void Dispose()
         {
-            /*niepotrzebne - klient sam zamyka połączenie: 
-             * https://stackoverflow.com/questions/32703051/properly-shutting-down-mongodb-database-connection-from-c-sharp-2-1-driver
-             */
+
         }
     }
 }

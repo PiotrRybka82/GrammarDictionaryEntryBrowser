@@ -11,7 +11,6 @@ namespace Dictionary.Service.FormProcessors
         public Adv(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase) 
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
         protected override void CorrectEntry(Entry entry)
         {
             base.CorrectEntry(entry);
@@ -24,17 +23,13 @@ namespace Dictionary.Service.FormProcessors
 
         }
 
-
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
             //brak
         }
 
-
         protected override void AddRelateds(Entry entry)
         {
-            //formy stopnia 
-
             //stopień równy
             RelatedAddingCondition = () =>
                 AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("com") &&
@@ -43,7 +38,6 @@ namespace Dictionary.Service.FormProcessors
             WordSelector = () => AdditionalLexemeEqualForms.Where(x => x.Categories.Contains("adv")).Posit().Word();
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
-
 
             //stopień wyższy
             RelatedAddingCondition = () =>
@@ -54,7 +48,6 @@ namespace Dictionary.Service.FormProcessors
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
-
             //stopień najwyższy
             RelatedAddingCondition = () =>
                 AdditionalLexemeEqualForms.SelectMany(x => x.Categories).Contains("sup") &&
@@ -64,13 +57,11 @@ namespace Dictionary.Service.FormProcessors
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
-
             //przymiotnik podstawowy
             categories = new[] { LabelPrototypes.Pos.Adjective };
             WordSelector = () => LexemeForms.Where(x => x.Categories.Contains("adj")).Posit().Sg().Nom().M1().Word();
 
             AddRelated(entry, "adja", categories, WordSelector);
-
 
             //imiesłów podstawowy (jeśli przysłówek odimiesłowowy)
             categories = new[] { LabelPrototypes.VerbForms.Participle.Active };
@@ -78,13 +69,11 @@ namespace Dictionary.Service.FormProcessors
 
             AddRelated(entry, "pacta", categories, WordSelector);
 
-
             //czasownik podstawowy (jeśli przysłówek odimiesłowowy)
             categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
             WordSelector = () => LexemeForms.Inf().Word();
 
             AddRelated(entry, "pacta", categories, WordSelector);
-
         }
 
         protected override void AddTables(Entry entry)
@@ -120,11 +109,7 @@ namespace Dictionary.Service.FormProcessors
                 newForm.AddStyleLabels(forms.ToList()[i]);
 
                 yield return newForm;
-
             }
-
         }
-
-
     }
 }

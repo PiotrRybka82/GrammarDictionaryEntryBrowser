@@ -18,7 +18,6 @@ namespace Dictionary.Service.Tests
         {
             return GroupForms(forms);
         }
-
     }
 
     public class DictionaryTests
@@ -40,7 +39,6 @@ namespace Dictionary.Service.Tests
         private const string _data_generatedForms
             = @"C:\Users\piotr\OneDrive\Desktop\praca inzynierska\_backend\dictionary.tests\data\generatedFormsTest.csv";
 
-
         private static DatabaseSettings _databaseSetting = new DatabaseSettings
         {
             ConnectionString = "",
@@ -51,12 +49,9 @@ namespace Dictionary.Service.Tests
 
         private static UnitOfWork _unitOfWork = new UnitOfWork(_databaseSetting);
 
-
         private DictionaryServiceForTests _dictionary = new DictionaryServiceForTests(_unitOfWork, "");
 
-
         #region DictionaryService.GroupForms() tests
-
 
         [Fact]
         public void GroupForms_fakeForms_numberOfEquals4()
@@ -79,9 +74,7 @@ namespace Dictionary.Service.Tests
             var expected = 4;
 
             Assert.Equal(expected, actual);
-
         }
-
 
         [Fact]
         public void GroupForms_fakeForms_numberOfEquals3()
@@ -102,9 +95,7 @@ namespace Dictionary.Service.Tests
             var expected = 3;
 
             Assert.Equal(expected, actual);
-
         }
-
 
         [Fact]
         public void GroupForms_fakeForms_numberOfEquals4_2()
@@ -127,16 +118,9 @@ namespace Dictionary.Service.Tests
             var expected = 4;
 
             Assert.Equal(expected, actual);
-
         }
 
-
-
-
-
         #endregion
-
-
 
         #region Table categories tests
 
@@ -200,10 +184,7 @@ namespace Dictionary.Service.Tests
                 $"rowAbbr: {rowAbbr}");
         }
 
-
         #endregion
-
-
 
         #region Lemma tests
 
@@ -226,10 +207,7 @@ namespace Dictionary.Service.Tests
                 $"\npos: {string.Join(", ", entries.Select(x => x.Pos.ValueFull))}");
         }
 
-
         #endregion
-
-
 
         #region Part of speech tests
 
@@ -244,7 +222,7 @@ namespace Dictionary.Service.Tests
 
             var condition = labels.Contains(categoryAbbr);
 
-            Assert.True(condition, $"labels: {string.Join(", ", labels)}, categoryAbbr: {categoryAbbr}");
+            Assert.True(condition, $"word: {form}\nlabels: {string.Join(", ", labels)}\ncategoryAbbr: {categoryAbbr}");
         }
 
         [Theory]
@@ -258,13 +236,10 @@ namespace Dictionary.Service.Tests
 
             var condition = labels.Contains(categoryFull);
 
-            Assert.True(condition, $"labels: {string.Join(", ", labels)}, categoryFull: {categoryFull}");
+            Assert.True(condition, $"labels: {string.Join(", ", labels)}\ncategoryFull: {categoryFull}");
         }
 
-
         #endregion
-
-
 
         #region Form categories tests
 
@@ -322,10 +297,7 @@ namespace Dictionary.Service.Tests
                 $"categoryName: {categoryName}");
         }
 
-
         #endregion
-
-
 
         #region Number of entries
 
@@ -346,10 +318,7 @@ namespace Dictionary.Service.Tests
             Assert.True(condition, $"actual: {actual} " + (ifGreater ? ">=" : "==") + $" expected: {expected}");
         }
 
-
         #endregion
-
-
 
         #region Related tests
 
@@ -371,7 +340,6 @@ namespace Dictionary.Service.Tests
                 $"\nrelCats: {string.Join(", ", relatedsCategories)}" +
                 $"\nrelatedWord: {relatedWord}"
                 );
-
         }
 
         [Theory]
@@ -393,12 +361,9 @@ namespace Dictionary.Service.Tests
                 $"paradigms: {string.Join(", ", paradigms)}\n" +
                 $"actual categories:\n\t{string.Join(", ", categoriesFull)}\n" +
                 $"expected category:\n\t{relatedCategoryFull}");
-
         }
 
         #endregion
-
-
 
         #region Number of tables, columns, rows
 
@@ -452,8 +417,6 @@ namespace Dictionary.Service.Tests
 
         #endregion
 
-
-
         #region Generated forms tests
 
         [Theory]
@@ -474,13 +437,10 @@ namespace Dictionary.Service.Tests
                 $"form: {form}\n" +
                 $"actual forms: {string.Join(", ", forms)}\n" +
                 $"expected form: {result}");
-
         }
 
         #endregion
-
-
-        
+                
         [Fact]
         public void GetEntriesPsa_secondRowCategoryFullEqualsDopelniacz()
         {
@@ -506,8 +466,5 @@ namespace Dictionary.Service.Tests
 
             Xunit.Assert.Equal(expected, actual);
         }
-
-
-
     }
 }

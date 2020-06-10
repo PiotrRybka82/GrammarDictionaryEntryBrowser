@@ -10,11 +10,13 @@ namespace Dictionary.Service.FormProcessors
         public VerbWinien(Form searchedForm, IEnumerable<Form> lexemeForms, IEnumerable<Form> homonymousForms, string formQueryUrlBase)
             : base(searchedForm, lexemeForms, homonymousForms, formQueryUrlBase) { }
 
-
         protected override void AddRelateds(Entry entry)
         {
             //przymiotnik homonimiczny
-
+            RelatedAddingCondition = () => HomonymousForms.SelectMany(x => x.Categories).Contains("adj"); //przymiotnik
+            var categories = new[] { LabelPrototypes.Pos.Adjective };
+            WordSelector = () => HomonymousForms.Sg().Nom().M1().Word();
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
         }
 
         protected override void AddTables(Entry entry)
@@ -134,11 +136,7 @@ namespace Dictionary.Service.FormProcessors
                     GenerateEntryTableRow(0, LabelPrototypes.EmptyLabel, GetTableCellForms(LexemeForms.Inf()))
                 }
             });
-
         }
-
-
-
 
         protected override IEnumerable<Entry.Form> GetTableCellForms(IEnumerable<Form> forms)
         {
@@ -163,15 +161,11 @@ namespace Dictionary.Service.FormProcessors
                 newForm.AddStyleLabels(forms.ToList()[i]);
 
                 yield return newForm;
-
             }
-
         }
-
 
         protected override void AddAnalyticalForms(string[] auxiliaryVerb, string oldCat, string newCat, bool auxVerbInPreposition = true)
         {
-            //if oldCat = ""...
             var sgForms = LexemeForms.Sg();
 
             foreach (var form in sgForms)
@@ -184,10 +178,7 @@ namespace Dictionary.Service.FormProcessors
             {
                 SupplementLexemeForms(JoinAnalyticalForms(auxiliaryVerb[0], form.Word, auxVerbInPreposition), oldCat == "" ? form.Categories.Append(newCat) : form.Categories.Replace(oldCat, newCat));
             }
-
         }
-
-
 
         private void addAdditionalForms()
         {
@@ -256,18 +247,18 @@ namespace Dictionary.Service.FormProcessors
             {
                 SupplementLexemeForms(JoinAnalyticalForms("być", item.Word), item.Categories.Append("inf"));
             }
-
-
         }
 
         protected IEnumerable<Form> GetPseudoParticiples()
         {
+            //pseudoimiesłów w liczbie pojedynczej (pisał..., pisała, pisało)
             yield return LexemeForms.Sg().M1().First();
             yield return LexemeForms.Sg().M2().First();
             yield return LexemeForms.Sg().M3().First();
             yield return LexemeForms.Sg().F().First();
             yield return LexemeForms.Sg().N().First();
 
+            //pseudoimiesłów w liczbie mnogiej (pisali..., pisała, pisało)
             yield return LexemeForms.Pl().M1().First();
             yield return LexemeForms.Pl().M2().First();
             yield return LexemeForms.Pl().M3().First();
@@ -275,51 +266,49 @@ namespace Dictionary.Service.FormProcessors
             yield return LexemeForms.Pl().N().First();
         }
 
-
         protected override IEnumerable<Form> GetFullParadigm(IEnumerable<Form> forms)
         {
+            //liczba pojedyncza (wszystkie rodzaje) do połączeń z czasownikiem posiłkowym w osobie pierwszej
             yield return forms.Sg().M1().First();
             yield return forms.Sg().M2().First();
             yield return forms.Sg().M3().First();
             yield return forms.Sg().F().First();
             yield return forms.Sg().N().First();
 
+            //liczba pojedyncza (wszystkie rodzaje) do połączeń z czasownikiem posiłkowym w osobie drugiej
             yield return forms.Sg().M1().First();
             yield return forms.Sg().M2().First();
             yield return forms.Sg().M3().First();
             yield return forms.Sg().F().First();
             yield return forms.Sg().N().First();
 
+            //liczba pojedyncza (wszystkie rodzaje) do połączeń z czasownikiem posiłkowym w osobie trzeciej
             yield return forms.Sg().M1().First();
             yield return forms.Sg().M2().First();
             yield return forms.Sg().M3().First();
             yield return forms.Sg().F().First();
             yield return forms.Sg().N().First();
 
+            //liczba mnoga (wszystkie rodzaje) do połączeń z czasownikiem posiłkowym w osobie pierwszej
             yield return forms.Pl().M1().First();
             yield return forms.Pl().M2().First();
             yield return forms.Pl().M3().First();
             yield return forms.Pl().F().First();
             yield return forms.Pl().N().First();
 
+            //liczba mnoga (wszystkie rodzaje) do połączeń z czasownikiem posiłkowym w osobie drugiej
             yield return forms.Pl().M1().First();
             yield return forms.Pl().M2().First();
             yield return forms.Pl().M3().First();
             yield return forms.Pl().F().First();
             yield return forms.Pl().N().First();
 
+            //liczba mnoga (wszystkie rodzaje) do połączeń z czasownikiem posiłkowym w osobie trzeciej
             yield return forms.Pl().M1().First();
             yield return forms.Pl().M2().First();
             yield return forms.Pl().M3().First();
             yield return forms.Pl().F().First();
             yield return forms.Pl().N().First();
         }
-
-
-
-
-
-
-
     }
 }

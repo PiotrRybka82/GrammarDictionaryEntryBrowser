@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dictionary.Core.Models;
 using Dictionary.Core.Repositories;
+using MongoDB.Driver;
 
 namespace Dictionary.Data.Repositories
 {
@@ -11,7 +12,7 @@ namespace Dictionary.Data.Repositories
 
         public async Task<IEnumerable<Lemma>> GetAllLemmasAsync()
         {
-            return await base.GetAllAsync();
+            return await _collection.AsQueryable().ToListAsync();
         }
     }
 }

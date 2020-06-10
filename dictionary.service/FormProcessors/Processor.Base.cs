@@ -21,16 +21,11 @@ namespace Dictionary.Service.FormProcessors
 
         #endregion
 
-
-
         #region protected properties
 
         protected Func<string> WordSelector;
         protected Func<bool> RelatedAddingCondition;
-
-
         protected string FormQueryUrlBase => _formQueryUrlBase;
-
         protected Form SearchedForm => _searchedForm;
         protected IEnumerable<Form> LexemeForms
         {
@@ -44,14 +39,10 @@ namespace Dictionary.Service.FormProcessors
             set { _additionalLexemeEqualForms = value; }
         }
 
-
-
         protected string SearchedFormFirstCategory => SearchedForm.Categories.FirstOrDefault();
         protected IEnumerable<string> FormsFirstCategory => LexemeForms.Select(x => x.Categories.FirstOrDefault()).Distinct();
 
         #endregion
-
-
 
         #region constructor
 
@@ -66,8 +57,6 @@ namespace Dictionary.Service.FormProcessors
 
         #endregion
 
-
-
         #region abstract methods
 
         protected abstract void AddParadigmSpecificGeneralLabels(Entry entry);
@@ -77,8 +66,6 @@ namespace Dictionary.Service.FormProcessors
         protected abstract void CorrectEntry(Entry entry);
 
         #endregion
-
-
 
         #region internal methods
 
@@ -90,11 +77,8 @@ namespace Dictionary.Service.FormProcessors
             AddTables(entry);
             AddRelateds(entry);
             CorrectEntry(entry);
-
             return entry;
-
         }
-
 
         internal Paradigm? GetParadigm()
         {
@@ -106,11 +90,11 @@ namespace Dictionary.Service.FormProcessors
             else if (isPron12()) return Paradigm.pron12;
             else if (isPron3()) return Paradigm.pron3;
 
-            //czasowniki po przymiotnikach i przysłówkach (żeby przechwycić odsłowniki, imiesłowy i formy odimiesłowowe)
-            //na początku winien i pred jako bardziej specyficzne kategorie
+            //czasowniki po przymiotnikach i przyslówkach (żeby przechwycic odslowniki, imieslowy i formy odimieslowowe)
+            //na poczatku winien i pred jako bardziej specyficzne kategorie
             else if (isV_winien()) return Paradigm.v_winien;
             else if (isV_pred()) return Paradigm.v_pred;
-            //być przed innymi czaasownikami
+            //byc przed innymi czaasownikami
             else if (isV_ToBe()) return Paradigm.v_tobe;
             else if (isV()) return Paradigm.v;
 
@@ -118,9 +102,6 @@ namespace Dictionary.Service.FormProcessors
         }
 
         #endregion
-
-
-
 
         #region protected auxiliary methods
 
@@ -135,7 +116,6 @@ namespace Dictionary.Service.FormProcessors
                 Word = newWord
             });
         }
-
 
         protected Entry.Row GenerateEntryTableRow(int id, Entry.Label rowCategory, params IEnumerable<Entry.Form>[] forms)
         {
@@ -157,7 +137,6 @@ namespace Dictionary.Service.FormProcessors
             return newRow;
         }
 
-
         protected Entry InitializeEntry(int index, string lemma = "")
         {
             return new Entry
@@ -172,7 +151,6 @@ namespace Dictionary.Service.FormProcessors
                 Tables = new List<Entry.Table>()
             };
         }
-                
 
         protected Entry.Label GetPos()
         {
@@ -185,20 +163,15 @@ namespace Dictionary.Service.FormProcessors
             switch (abbr)
             {
                 case "interj": value = "wykrzyknik"; break;
-
                 case "subst":
                 case "depr": abbr = "subst"; value = "rzeczownik"; break;
-                
-                case "ger": value = "odsłownik"; descr = "rzeczownik odczasownikowy"; break;  
-
+                case "ger": value = "odsłownik"; descr = "rzeczownik odczasownikowy"; break;
                 case "adj":
                 case "adjc": abbr = "adj"; value = "przymiotnik"; break;
-
                 case "adjp":
                 case "adja":
                 case "adv":
                 case "pacta": abbr = "adv"; value = "przysłówek"; break;
-
                 case "inf":
                 case "praet":
                 case "cond":
@@ -209,30 +182,20 @@ namespace Dictionary.Service.FormProcessors
                 case "aglt":
                 case "winien":
                 case "pred": abbr = "verb"; value = "czasownik"; break;
-
                 case "pact": value = "imiesłów przymiotnikowy czynny"; break;
                 case "ppas": value = "imiesłów przymiotnikowy bierny"; break;
-
                 case "pant": value = "imiesłów przysłówkowy uprzedni"; break;
                 case "pcon": value = "imiesłów przysłówkowy współczesny"; break;
-
                 case "conj":
                 case "comp": abbr = "conj"; value = "spójnik"; break;
-
                 case "part": value = "partykuła"; break;
-
                 case "brev": value = "skrót"; break;
-
-                case "frag": value = "burkinostka"; descr = "cząstka nazwy wielowyrazowej niewystępująca samodzielnie"; break;
-
+                case "frag": value = "burkinostka"; descr = "cząstka nazwy wielowyrazowej niewystępujaca samodzielnie"; break;
                 case "prep": value = "przyimek"; break;
-
                 case "numcomp":
                 case "num": abbr = "num"; value = "liczebnik"; break;
-
                 case "ppron12":
                 case "ppron3": abbr = "pron"; value = "zaimek osobowy"; break;
-
                 default: value = ""; break;
             }
 
@@ -246,11 +209,8 @@ namespace Dictionary.Service.FormProcessors
             };
         }
 
-
         protected void AddGeneralLabels(Entry entry)
         {
-            //dodanie etykiet pojawiających się we wszystkich formach
-
             //znaczenia
             entry.Meanings = LexemeForms.SelectMany(x => x.Meanings).Distinct();
             var temp = entry.Meanings.ToList();
@@ -267,7 +227,7 @@ namespace Dictionary.Service.FormProcessors
             foreach (string globalLabel in globalLabels)
             {
                 var tempForm = new Form { Labels = new[] { globalLabel } };
-                
+
                 var tempEntryForm = new Entry.Form();
 
                 tempEntryForm.AddStyleLabels(tempForm);
@@ -276,13 +236,8 @@ namespace Dictionary.Service.FormProcessors
                 {
                     if (tempEntryForm.Categories.Count() > 0) entry.Labels = entry.Labels.Add(tempEntryForm.Categories.First());
                 }
-                
             }
-
-
         }
-
-
 
         protected void AddRelated(
             Entry entry,
@@ -315,25 +270,21 @@ namespace Dictionary.Service.FormProcessors
             AddRelated(entry, condition, categoriesOfRelated, relatedWordSelector);
         }
 
-
-
         protected void FilterOutDegreeForms()
         {
-            if (SearchedForm.Categories.Contains("pos")) //na we stopień równy -> usuń stopień wyższy i najwyższy
+            if (SearchedForm.Categories.Contains("pos")) //na we stopien równy -> usun stopien wyższy i najwyższy
             {
                 LexemeForms = LexemeForms.Where(x => !x.Categories.Contains("com") && !x.Categories.Contains("sup"));
             }
-            else if (SearchedForm.Categories.Contains("com")) //na we stopień wyższy -> usuń stopień równy i najwyższy
+            else if (SearchedForm.Categories.Contains("com")) //na we stopien wyższy -> usun stopien równy i najwyższy
             {
                 LexemeForms = LexemeForms.Where(x => !x.Categories.Contains("pos") && !x.Categories.Contains("sup"));
             }
-            else if (SearchedForm.Categories.Contains("sup")) //na we stopień najwyższy -> usuń stopień równy i wyższy
+            else if (SearchedForm.Categories.Contains("sup")) //na we stopien najwyższy -> usun stopien równy i wyższy
             {
                 LexemeForms = LexemeForms.Where(x => !x.Categories.Contains("pos") && !x.Categories.Contains("com"));
             }
         }
-
-
 
         protected void CorrectEntryLemmaOfComparables(Entry entry)
         {
@@ -343,12 +294,9 @@ namespace Dictionary.Service.FormProcessors
             }
         }
 
-
-
         protected IEnumerable<string> FindGlobalLabels(IEnumerable<Form> forms)
         {
             int numberOfForms = forms.Count();
-
             var allLabels = forms.SelectMany(x => x.Labels);
             var distinctLabels = allLabels.Distinct();
 
@@ -364,9 +312,7 @@ namespace Dictionary.Service.FormProcessors
                     yield return label;
                 }
             }
-
         }
-
 
         protected void RemoveGlobalLabel(IEnumerable<Form> forms, string label)
         {
@@ -375,14 +321,11 @@ namespace Dictionary.Service.FormProcessors
                 if (form.Labels != null)
                 {
                     var tempList = form.Labels.ToList();
-
                     tempList.Remove(label);
-
                     form.Labels = tempList;
                 }
             }
         }
-
 
         private bool searchedFormFirstCategoryContainsTags(string tags, string separator)
         {
@@ -400,9 +343,6 @@ namespace Dictionary.Service.FormProcessors
         }
 
         #endregion
-
-
-
 
         #region isPos auxiliary methods
 
@@ -462,7 +402,5 @@ namespace Dictionary.Service.FormProcessors
         }
 
         #endregion
-
     }
-
 }

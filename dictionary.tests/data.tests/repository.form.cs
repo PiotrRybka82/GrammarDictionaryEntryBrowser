@@ -47,7 +47,6 @@ namespace Dictionary.Data.Tests
                 .FirstOrDefaultAsync(x =>
                     x.Lemma.Form.Equals("być"));
 
-
             var actual = res.Categories.ToList()[0];
             var expected = "impt";
 
@@ -57,14 +56,12 @@ namespace Dictionary.Data.Tests
             Assert.Equal(expected, actual);
         }
 
-
         [Fact]
         public async Task SingleOrDefaultAsyncCategoriesContainsPred_wordEqualsBrak()
         {
             var res = await _unitOfWork.Forms
                 .FirstOrDefaultAsync(x =>
                     x.Categories.Contains("pred"));
-
 
             var actual = res.Word;
             var expected = "brak";
@@ -75,7 +72,6 @@ namespace Dictionary.Data.Tests
             Assert.Equal(expected, actual);
         }
 
-
         [Fact]
         public async Task GetByIdAsync_lemmaEqualsByc()
         {
@@ -83,7 +79,6 @@ namespace Dictionary.Data.Tests
 
             var res = await _unitOfWork.Forms
                 .GetByIdAsync(id);
-
 
             var actual = res.Lemma.Form;
             var expected = "być";
@@ -94,8 +89,6 @@ namespace Dictionary.Data.Tests
             Assert.Equal(expected, actual);
         }
 
-
-
         [Fact]
         public async Task FindAsyncLemmaByc_resultsEqual260()
         {
@@ -103,7 +96,6 @@ namespace Dictionary.Data.Tests
 
             var res = await _unitOfWork.Forms
                 .FindAsync(x => x.Lemma.Form.Equals(form));
-
 
             var actual = res.Count();
             var expected = 260;
@@ -113,7 +105,6 @@ namespace Dictionary.Data.Tests
 
             Assert.Equal(expected, actual);
         }
-
 
         [Fact]
         public async Task FindAsyncFormJestem_lemmaEqualsByc()
@@ -127,15 +118,6 @@ namespace Dictionary.Data.Tests
             var expected = "być";
 
             Assert.Equal(expected, actual);
-
         }
-
-
-
-
-
-
-
-
     }
 }
