@@ -38,7 +38,6 @@ namespace Dictionary.Service.FormProcessors
 
             //odsłowniki
             AddRelatedNouns(entry);
-
         }
 
         protected override void AddTables(Entry entry)

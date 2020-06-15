@@ -42,7 +42,6 @@ namespace Dictionary.Service.Tests
             var res = _comparer.Equals(lab1, lab2);
 
             Assert.True(res);
-
         }
 
         [Fact]
@@ -51,9 +50,6 @@ namespace Dictionary.Service.Tests
             var res = _comparer.Equals(lab1, lab3);
 
             Assert.False(res);
-
         }
-
-
     }
 }

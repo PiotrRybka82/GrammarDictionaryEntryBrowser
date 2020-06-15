@@ -16,7 +16,6 @@ namespace Dictionary.Service.FormProcessors
 
         }
 
-
         protected override void AddParadigmSpecificGeneralLabels(Entry entry)
         {
             
@@ -29,7 +28,7 @@ namespace Dictionary.Service.FormProcessors
             WordSelector = () => SearchedForm.Lemma.Form;
             AddRelated(entry, "brev", categories, WordSelector);
 
-            //imiesłów przysłówkowy uprzedni
+            //imiesłów przysłówkowy 
             categories = new[] { LabelPrototypes.VerbForms.BaseVerb };
             WordSelector = () => LexemeForms.Inf().Word();
             AddRelated(entry, "pant", categories, WordSelector);

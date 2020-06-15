@@ -139,7 +139,6 @@ namespace Dictionary.Service.FormProcessors
                 public static Entry.Label Anterior => new Entry.Label { ValueAbbr = "im uprz.", Id = 0, Name = "imiesłów", ValueFull = "imiesłów przysłówkowy uprzedni" };
                 public static Entry.Label Concurrent => new Entry.Label { ValueAbbr = "im. współcz.", Id = 0, Name = "imiesłów", ValueFull = "imiesłów przysłówkowy współczesny" };
             }
-
         }
 
         internal static class Congruence //kongruentnosc

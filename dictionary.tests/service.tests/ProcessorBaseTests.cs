@@ -81,7 +81,6 @@ namespace Dictionary.Service.Tests
         }
     }
 
-
     public class ProcessorBaseTests
     {
         private static DatabaseSettings _databaseSetting = new DatabaseSettings
@@ -95,7 +94,6 @@ namespace Dictionary.Service.Tests
         ProcessorBaseForTesting _processorBase = new ProcessorBaseForTesting(null, null, null, "");
 
         #region GetParadigm
-
 
         [Fact]
         public void GetParadigm_indeclinable()
@@ -115,7 +113,6 @@ namespace Dictionary.Service.Tests
 
             Assert.Equal(expected, actual);
         }
-
 
         [Fact]
         public void GetParadigm_noun()
@@ -195,7 +192,6 @@ namespace Dictionary.Service.Tests
 
         #endregion
 
-
         #region GroupForms
 
         [Fact]
@@ -214,7 +210,6 @@ namespace Dictionary.Service.Tests
             Assert.True(actual);
         }
 
-
         [Fact]
         public void GroupForms_a()
         {
@@ -228,10 +223,6 @@ namespace Dictionary.Service.Tests
 
             Assert.True(actual);
         }
-
-
-
-
 
         #endregion
 
@@ -295,10 +286,7 @@ namespace Dictionary.Service.Tests
             Assert.Equal(expected, actual);
         }
 
-
-
         #endregion
-
 
         #region GetPos
 
@@ -322,7 +310,6 @@ namespace Dictionary.Service.Tests
         }
 
         #endregion
-
 
         #region AddGeneralLabels
 
@@ -365,9 +352,7 @@ namespace Dictionary.Service.Tests
             Assert.Equal(expected, actual);
         }
 
-
         #endregion
-
 
         #region AddParadigmSpecificGeneralLabels
 
@@ -392,9 +377,6 @@ namespace Dictionary.Service.Tests
         }
 
         #endregion
-
-
-
 
     }
 }
