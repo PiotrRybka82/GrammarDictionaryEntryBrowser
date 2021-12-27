@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http.Routing;
+//using System.Web.Http.Routing;
 using Dictionary.Core;
 using Dictionary.Core.Services;
 using Dictionary.Data;
@@ -54,7 +54,7 @@ namespace Dictionary.Api
 
             //core
             services.AddTransient<IDictionary, DictionaryService>();
-                        
+
             services
                 .AddControllers()
                 .SetCompatibilityVersion(CompatibilityVersion.Latest); //zapewnia kompatybilnosc ze wskazana wersja frameworka
@@ -71,7 +71,7 @@ namespace Dictionary.Api
             {
                 app.UseHsts(); //wymusza na przegladarce korzystanie wyłacznie z HTTPS
             }
-                        
+
             app.UseHttpsRedirection();
             app.UseRouting();
 
@@ -82,7 +82,7 @@ namespace Dictionary.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });  
+            });
         }
     }
 }

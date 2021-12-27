@@ -53,6 +53,24 @@ namespace Dictionary.Service.FormProcessors
 
             AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
 
+            //jeśli forma niezanegowana -> dodaj formę zanegowaną
+            RelatedAddingCondition = () => !SearchedForm.Categories.Contains("neg");
+            categories = new[] { LabelPrototypes.Derivatives.Neg };
+            if (SearchedForm.Categories.Contains("pact"))
+            {
+                WordSelector = () => LexemeForms.Neg().ParticAct().Sg().Nom().M1().Word();
+            }
+            else if (SearchedForm.Categories.Contains("ppas"))
+            {
+                WordSelector = () => LexemeForms.Neg().ParticPas().Sg().Nom().M1().Word();
+            }
+            else
+            {
+                WordSelector = () => LexemeForms.Neg().Sg().Nom().M1().Word();
+            }
+
+            AddRelated(entry, RelatedAddingCondition, categories, WordSelector);
+
             //forma na -u
             categories = new[] { LabelPrototypes.Other.Polsku };
             WordSelector = () => LexemeForms.Polsku().Word();

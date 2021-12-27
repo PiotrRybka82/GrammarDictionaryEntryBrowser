@@ -71,6 +71,9 @@ namespace Dictionary.Service.FormProcessors
                     Word = forms.ToList()[i].Word
                 };
 
+                //rodzaj
+                newForm.AddGenderLabels(forms.ToList()[i]);
+
                 //forma akcentowana|nieakcentowana
                 newForm.AddAccentedLabels(forms.ToList()[i]);
 

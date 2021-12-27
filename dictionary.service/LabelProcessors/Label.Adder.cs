@@ -214,7 +214,7 @@ namespace Dictionary.Service.FormProcessors
 
         public static void AddNegationLabel(this Entry.Form entryForm, Form formFromDb)
         {
-            if (formFromDb.Word.Contains("neg"))
+            if (formFromDb.Categories.Contains("neg"))
             {
                 entryForm.Categories = entryForm.Categories.Add(LabelPrototypes.Derivatives.Neg);
             }

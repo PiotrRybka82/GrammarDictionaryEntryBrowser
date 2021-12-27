@@ -13,7 +13,7 @@ namespace Dictionary.Api.Controllers
     [Route("[controller]")]
     public class DictionaryController : ControllerBase
     {
-        private readonly IDictionary _dictionary;       
+        private readonly IDictionary _dictionary;
         private readonly ILogger<DictionaryController> _logger;
 
         public DictionaryController(
@@ -24,6 +24,7 @@ namespace Dictionary.Api.Controllers
             _dictionary = dictionary;
         }
 
+        //dictionary/welcome
         [HttpGet("welcome")]
         public string Welcome()
         {
