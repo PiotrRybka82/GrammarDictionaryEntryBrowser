@@ -42,16 +42,16 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-		  
+
       - name: Restore
         run: dotnet restore
-	  
+
       - name: Build
 	run: dotnet build --no-restore -c Release
-		
+
       - name: Publish
 	run: dotnet publish --no-build -c Release -o ./published
-		
+
       - name: "Deploy to Azure WebApp"
 	uses: azure/webapps-deploy@v2
 	with:
