@@ -32,7 +32,7 @@ on:
 
 jobs:
   build:
-	name: Build and deploy
+    name: "Build and deploy"
     runs-on: ubuntu-latest
 
     steps:
@@ -44,17 +44,17 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 		  
       - name: Restore
-	    run: dotnet restore
+        run: dotnet restore
 	  
-	  - name: Build
-	    run: dotnet build --no-restore -c Release
+      - name: Build
+	run: dotnet build --no-restore -c Release
 		
       - name: Publish
-	    run: dotnet publish --no-build -c Release -o ./published
+	run: dotnet publish --no-build -c Release -o ./published
 		
-	  - name: 'Deploy to Azure WebApp'
-	    uses: azure/webapps-deploy@v2
-		with:
-		  app-name: ${{ env.AZURE_WEBAPP_NAME }}
-		  publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-		  package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      - name: "Deploy to Azure WebApp"
+	uses: azure/webapps-deploy@v2
+	with:
+	  app-name: ${{ env.AZURE_WEBAPP_NAME }}
+	  publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+	  package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
