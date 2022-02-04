@@ -32,7 +32,7 @@ on:
 
 jobs:
   build:
-	name: Build and deploy
+    name: Build and deploy
     runs-on: ubuntu-latest
 
     steps:
